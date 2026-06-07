@@ -7,12 +7,12 @@ export function buildFilterString(state: FilterState): string {
   } else if (state.colorMode) {
     parts.push(`url(#${state.colorMode})`);
   }
-  if (state.darkMode) parts.push('invert(100%) hue-rotate(180deg)');
+  if (state.darkMode) parts.push('invert(93%) hue-rotate(180deg)');
   if (state.invertColors && !state.darkMode) parts.push('invert(100%) hue-rotate(180deg)');
   if (state.warmTone) parts.push('sepia(25%)');
   if (state.highContrast) parts.push('contrast(150%)');
   if (state.brightness !== null) parts.push(`brightness(${state.brightness})`);
-  if (state.darkMode && state.brightness === null) parts.push('brightness(0.85)');
+  if (state.darkMode && state.brightness === null) parts.push('brightness(0.8)');
   return parts.join(' ') || 'none';
 }
 
@@ -20,11 +20,18 @@ export function applyFilters(state: FilterState): void {
   const root = document.documentElement;
   root.style.filter = buildFilterString(state);
 
-  // Dark mode via invert handles most of it, but we reinforce with color-scheme
   if (state.darkMode) {
     root.style.colorScheme = 'dark';
+    root.classList.add('vv-dark');
   } else {
     root.style.colorScheme = '';
+    root.classList.remove('vv-dark');
+  }
+
+  if (state.invertColors && !state.darkMode) {
+    root.classList.add('vv-invert');
+  } else {
+    root.classList.remove('vv-invert');
   }
 
   applyZoom(state.zoom);
@@ -49,7 +56,6 @@ export function applyZoom(zoom: FilterState['zoom']): void {
     return;
   }
 
-  // Center and peripheral use a vignette/spotlight SVG overlay
   document.body.style.transform = '';
   document.body.style.transformOrigin = '';
   document.body.style.overflow = '';
@@ -62,7 +68,6 @@ export function applyZoom(zoom: FilterState['zoom']): void {
   }
 
   if (zoom === 'center') {
-    // Macular degeneration: blur/darken center, keep edges clear
     overlay.innerHTML = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="vv-mac-grad" cx="50%" cy="50%" r="30%">
@@ -77,7 +82,6 @@ export function applyZoom(zoom: FilterState['zoom']): void {
       <rect width="100%" height="100%" fill="url(#vv-mac-grad)" filter="url(#vv-mac-blur)"/>
     </svg>`;
   } else if (zoom === 'peripheral') {
-    // Glaucoma / tunnel vision: darken edges, keep center clear
     overlay.innerHTML = `<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="vv-tunnel-grad" cx="50%" cy="50%" r="35%">
@@ -92,8 +96,10 @@ export function applyZoom(zoom: FilterState['zoom']): void {
 }
 
 export function resetFilters(): void {
-  document.documentElement.style.filter = 'none';
-  document.documentElement.style.colorScheme = '';
+  const root = document.documentElement;
+  root.style.filter = 'none';
+  root.style.colorScheme = '';
+  root.classList.remove('vv-dark', 'vv-invert');
   document.body.style.transform = '';
   document.body.style.transformOrigin = '';
   document.body.style.overflow = '';

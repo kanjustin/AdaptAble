@@ -7,24 +7,23 @@ import { AccessibilityCommand, FilterState, defaultFilterState } from '@/types';
 
 const SUPPORTED_ADAPTATIONS = [
   { category: 'Color Vision', items: [
-    { label: 'Deuteranopia', desc: 'Red-green (most common)' },
-    { label: 'Protanopia', desc: 'Red weakness' },
-    { label: 'Tritanopia', desc: 'Blue-yellow' },
-    { label: 'Achromatopsia', desc: 'Full grayscale' },
+    { label: 'Deuteranopia', desc: 'Red-green (most common)', key: 'colorMode', value: 'deuteranopia' },
+    { label: 'Protanopia', desc: 'Red weakness', key: 'colorMode', value: 'protanopia' },
+    { label: 'Tritanopia', desc: 'Blue-yellow', key: 'colorMode', value: 'tritanopia' },
+    { label: 'Achromatopsia', desc: 'Full grayscale', key: 'colorMode', value: 'achromatopsia' },
   ]},
   { category: 'Vision Conditions', items: [
-    { label: 'Macular Degeneration', desc: 'Central vision loss' },
-    { label: 'Tunnel Vision', desc: 'Peripheral vision loss' },
-    { label: 'Low Vision', desc: 'Full page magnification' },
+    { label: 'Macular Degeneration', desc: 'Central vision loss', key: 'zoom', value: 'center' },
+    { label: 'Tunnel Vision', desc: 'Peripheral vision loss', key: 'zoom', value: 'peripheral' },
+    { label: 'Low Vision', desc: 'Full page magnification', key: 'zoom', value: 'full' },
   ]},
   { category: 'Display Comfort', items: [
-    { label: 'Dark Mode', desc: 'Inverts to dark background' },
-    { label: 'High Contrast', desc: 'Boosts contrast 150%' },
-    { label: 'Warm Tone', desc: 'Reduces blue light' },
-    { label: 'Brightness', desc: 'Adjustable 10%–150%' },
-    { label: 'Invert Colors', desc: 'Full color inversion' },
+    { label: 'Dark Mode', desc: 'Dark background for comfort', key: 'darkMode', value: true },
+    { label: 'High Contrast', desc: 'Boosts contrast 150%', key: 'highContrast', value: true },
+    { label: 'Warm Tone', desc: 'Reduces blue light', key: 'warmTone', value: true },
+    { label: 'Invert Colors', desc: 'Full color inversion', key: 'invertColors', value: true },
   ]},
-];
+] as const;
 
 export default function Home() {
   const [filterState, setFilterState] = useState<FilterState>(defaultFilterState);
@@ -78,6 +77,24 @@ export default function Home() {
     setFilterState(defaultFilterState);
     resetFilters();
     setExplanation('All filters cleared.');
+  };
+
+  const isActive = (key: string, value: any): boolean => {
+    return (filterState as any)[key] === value;
+  };
+
+  const toggleAdaptation = (key: string, value: any) => {
+    setFilterState(prev => {
+      const next = { ...prev };
+      const currently = (prev as any)[key];
+      if (key === 'colorMode' || key === 'zoom') {
+        (next as any)[key] = currently === value ? null : value;
+      } else {
+        (next as any)[key] = !currently;
+      }
+      applyFilters(next);
+      return next;
+    });
   };
 
   return (
@@ -163,13 +180,26 @@ export default function Home() {
               {SUPPORTED_ADAPTATIONS.map(group => (
                 <div key={group.category}>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">{group.category}</p>
-                  <div className="space-y-1">
-                    {group.items.map(item => (
-                      <div key={item.label} className="flex items-baseline justify-between gap-2 py-1 px-2 rounded-lg hover:bg-gray-50 transition-colors">
-                        <span className="text-xs font-medium text-gray-700">{item.label}</span>
-                        <span className="text-[10px] text-gray-400 text-right shrink-0">{item.desc}</span>
-                      </div>
-                    ))}
+                  <div className="space-y-0.5">
+                    {group.items.map(item => {
+                      const active = isActive(item.key, item.value);
+                      return (
+                        <button
+                          key={item.label}
+                          onClick={() => toggleAdaptation(item.key, item.value)}
+                          className={`w-full flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg text-left transition-all ${
+                            active
+                              ? 'bg-blue-50 border border-blue-200 shadow-sm'
+                              : 'hover:bg-gray-50 border border-transparent'
+                          }`}
+                        >
+                          <span className={`text-xs font-medium ${active ? 'text-blue-700' : 'text-gray-700'}`}>{item.label}</span>
+                          <span className={`text-[10px] shrink-0 ${active ? 'text-blue-500' : 'text-gray-400'}`}>
+                            {active ? 'ON' : item.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
