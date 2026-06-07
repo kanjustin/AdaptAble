@@ -4,6 +4,17 @@ import { AccessibilityCommand } from '@/types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
+// Allows the browser extension (chrome-extension:// origin) and the web app to call this route.
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
 const SYSTEM_PROMPT = `You are an accessibility assistant. The user speaks natural language describing their visual needs or symptoms. Parse their intent and return ONLY valid JSON matching this exact schema:
 
 {
@@ -32,7 +43,9 @@ Inference rules:
 export async function POST(req: NextRequest) {
   try {
     const { transcript } = await req.json();
-    if (!transcript) return NextResponse.json({ error: 'No transcript' }, { status: 400 });
+    if (!transcript) {
+      return NextResponse.json({ error: 'No transcript' }, { status: 400, headers: CORS_HEADERS });
+    }
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -46,9 +59,9 @@ export async function POST(req: NextRequest) {
     });
 
     const command: AccessibilityCommand = JSON.parse(response.text ?? '{}');
-    return NextResponse.json(command);
+    return NextResponse.json(command, { headers: CORS_HEADERS });
   } catch (err) {
     console.error('Gemini error:', err);
-    return NextResponse.json({ error: 'Failed to interpret command' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to interpret command' }, { status: 500, headers: CORS_HEADERS });
   }
 }

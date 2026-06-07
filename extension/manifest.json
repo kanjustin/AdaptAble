@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "VoiceVision",
+  "version": "1.0.0",
+  "description": "Voice-activated screen accessibility. Speak your needs — the page adapts in real time.",
+  "permissions": ["activeTab"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "VoiceVision — speak to adapt this page"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
