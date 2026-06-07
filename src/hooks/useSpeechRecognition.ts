@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 interface UseSpeechRecognitionReturn {
   transcript: string;
@@ -11,11 +11,14 @@ interface UseSpeechRecognitionReturn {
 export function useSpeechRecognition(): UseSpeechRecognitionReturn {
   const [transcript, setTranscript] = useState('');
   const [listening, setListening] = useState(false);
+  const [supported, setSupported] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-  const supported =
-    typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  useEffect(() => {
+    setSupported(
+      'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
+    );
+  }, []);
 
   const startListening = useCallback(() => {
     if (typeof window === 'undefined') return;
