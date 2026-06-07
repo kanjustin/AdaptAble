@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from 'next/server';
+import { AccessibilityCommand } from '@/types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
 
@@ -17,16 +18,16 @@ const SYSTEM_PROMPT = `You are an accessibility assistant. The user speaks natur
   "explanation": "one sentence summary of what you applied"
 }
 
-Rules:
-- "red-green colorblind" or "can't see red and green" → deuteranopia
-- "colors look washed out" → highContrast: true
+Inference rules:
+- "red-green colorblind" → deuteranopia
+- "colors look washed out" or "low contrast" → highContrast: true
 - "too bright" or "hurts my eyes" → darkMode: true, brightness: 0.6
 - "macular degeneration" → zoom: "center"
 - "glaucoma" or "tunnel vision" → zoom: "peripheral"
 - "light sensitive" or "photophobia" → darkMode: true, warmTone: true
 - "reset" or "normal" or "clear" → reset: true, all other fields null
-- Compound commands set multiple fields simultaneously
-- reset is always true or false, never null`;
+- Compound commands set multiple fields at once
+- reset is always boolean, never null`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const command = JSON.parse(response.text ?? '{}');
+    const command: AccessibilityCommand = JSON.parse(response.text ?? '{}');
     return NextResponse.json(command);
   } catch (err) {
     console.error('Gemini error:', err);

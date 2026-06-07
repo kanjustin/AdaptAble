@@ -29,9 +29,8 @@ export function applyFilters(state: FilterState): void {
 }
 
 export function resetFilters(): void {
-  const root = document.documentElement;
-  root.style.filter = 'none';
-  root.style.colorScheme = '';
+  document.documentElement.style.filter = 'none';
+  document.documentElement.style.colorScheme = '';
   document.body.style.backgroundColor = '';
   document.body.style.color = '';
 }
