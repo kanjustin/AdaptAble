@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       contents: [{ role: 'user', parts: [{ text: transcript }] }],
       config: {
         systemInstruction: SYSTEM_PROMPT,
