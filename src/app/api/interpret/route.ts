@@ -27,6 +27,9 @@ const SYSTEM_PROMPT = `You are an accessibility assistant. The user speaks NATUR
   "blur": boolean | null,
   "hemianopia": "left" | "right" | null,
   "zoom": "center" | "peripheral" | "full" | null,
+  "dimOverlay": boolean | null,
+  "boldText": boolean | null,
+  "reduceMotion": boolean | null,
   "intensities": {
     "colorMode": number (0-1) | undefined,
     "darkMode": number (0-1) | undefined,
@@ -34,7 +37,8 @@ const SYSTEM_PROMPT = `You are an accessibility assistant. The user speaks NATUR
     "warmTone": number (0-1) | undefined,
     "invertColors": number (0-1) | undefined,
     "blur": number (0-1) | undefined,
-    "zoom": number (0-1) | undefined
+    "zoom": number (0-1) | undefined,
+    "dimOverlay": number (0-1) | undefined
   } | null,
   "reset": boolean,
   "explanation": "one sentence summary of what you applied"
@@ -61,9 +65,15 @@ DISPLAY COMFORT:
 - "dark mode", "make it dark", "too white", "white background hurts" → darkMode: true
 - "too bright", "hurts my eyes", "screen is blinding", "dim it", "lower brightness" → darkMode: true, brightness: 0.6
 - "low contrast", "can't read the text", "text is hard to see", "everything looks faded", "washed out" → highContrast: true
-- "light sensitive", "photophobia", "fluorescent lights bother me", "screen gives me headaches" → darkMode: true, warmTone: true
+- "light sensitive", "photophobia", "migraine", "fluorescent lights bother me", "screen gives me headaches", "bright lights hurt" → dimOverlay: true, warmTone: true
 - "warm it up", "reduce blue light", "night mode", "easier on my eyes at night" → warmTone: true
 - "flip the colors", "invert", "reverse colors" → invertColors: true
+
+READING / FOCUS:
+- "astigmatism", "things look smeared or doubled", "presbyopia", "hard to focus up close", "letters look fuzzy or thin", "text is hard to make out" → boldText: true
+
+MOTION SENSITIVITY:
+- "motion sickness", "animations make me dizzy", "vestibular", "autoplay videos bother me", "reduce motion", "moving things make me nauseous" → reduceMotion: true
 
 RELATIVE / MAGNITUDE COMMANDS (use the provided currentState to compute these):
 - "darker" / "make it dimmer" → if darkMode is already on, increase intensities.darkMode by ~0.2 above currentState.intensities.darkMode (clamp 0-1) and leave darkMode null; if darkMode is off, set darkMode: true
@@ -137,7 +147,7 @@ export async function POST(req: NextRequest) {
 
     const command: AccessibilityCommand = JSON.parse(jsonMatch[0]);
 
-    const boolKeys = ['darkMode', 'highContrast', 'warmTone', 'invertColors', 'blur'] as const;
+    const boolKeys = ['darkMode', 'highContrast', 'warmTone', 'invertColors', 'blur', 'dimOverlay', 'boldText', 'reduceMotion'] as const;
     const allKeys = ['colorMode', ...boolKeys, 'brightness', 'zoom', 'hemianopia', 'intensities'] as const;
 
     const hasPositive = allKeys.some(k => {

@@ -94,6 +94,7 @@
     invertColors: 1,
     blur: 0.5,
     zoom: 0.5,
+    dimOverlay: 0.5,
   };
 
   let state = {
@@ -106,6 +107,9 @@
     blur: false,
     hemianopia: null,
     zoom: null,
+    dimOverlay: false,
+    boldText: false,
+    reduceMotion: false,
     intensities: { ...DEFAULT_INTENSITIES },
   };
 
@@ -217,11 +221,80 @@
       background:linear-gradient(${gradientDir}, black 80%, transparent 100%);"></div>`;
   }
 
+  // Photophobia/migraine: a non-inverting dark overlay that dims the page without
+  // flipping colors (unlike darkMode's invert+hue-rotate).
+  function applyDimOverlay(active, intensity) {
+    let overlay = document.getElementById('vv-dim-overlay');
+
+    if (!active) {
+      if (overlay) overlay.remove();
+      return;
+    }
+
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'vv-dim-overlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483645;pointer-events:none;background:black;';
+      document.body.appendChild(overlay);
+    }
+    overlay.style.opacity = (0.15 + intensity * 0.45).toFixed(2);
+  }
+
+  const BOLD_TEXT_CSS = `body, p, span, a, li, h1, h2, h3, h4, h5, h6, label, button, td, th, input, textarea {
+    font-weight: 600 !important;
+  }`;
+
+  // Astigmatism/presbyopia: thicker text is easier to resolve when edges look smeared.
+  function applyBoldText(active) {
+    let style = document.getElementById('vv-bold-text-style');
+
+    if (!active) {
+      if (style) style.remove();
+      return;
+    }
+
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'vv-bold-text-style';
+      style.textContent = BOLD_TEXT_CSS;
+      document.head.appendChild(style);
+    }
+  }
+
+  const REDUCE_MOTION_CSS = `*, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }`;
+
+  // Vestibular/motion sensitivity: kill animations/transitions and pause autoplay video.
+  function applyReduceMotion(active) {
+    let style = document.getElementById('vv-reduce-motion-style');
+
+    if (!active) {
+      if (style) style.remove();
+      return;
+    }
+
+    if (!style) {
+      style = document.createElement('style');
+      style.id = 'vv-reduce-motion-style';
+      style.textContent = REDUCE_MOTION_CSS;
+      document.head.appendChild(style);
+    }
+
+    document.querySelectorAll('video[autoplay]').forEach((v) => v.pause());
+  }
+
   // Re-run all visual effects from the current state — used after any state change.
   function applyAll() {
     applyFilters();
     applyZoom(state.zoom, state.intensities.zoom);
     applyHemianopia(state.hemianopia);
+    applyDimOverlay(state.dimOverlay, state.intensities.dimOverlay);
+    applyBoldText(state.boldText);
+    applyReduceMotion(state.reduceMotion);
   }
 
   // Persist state to chrome.storage so it carries over to new tabs/pages, and other
@@ -241,6 +314,9 @@
       blur: false,
       hemianopia: null,
       zoom: null,
+      dimOverlay: false,
+      boldText: false,
+      reduceMotion: false,
       intensities: { ...DEFAULT_INTENSITIES },
     };
     const root = document.documentElement;
@@ -249,6 +325,9 @@
     root.style.zoom = '';
     applyZoom(null, 0);
     applyHemianopia(null);
+    applyDimOverlay(false, 0);
+    applyBoldText(false);
+    applyReduceMotion(false);
   }
 
   // Load persisted state on page load so filters set on another page/tab apply here too.
@@ -329,6 +408,9 @@
           blur: cmd.blur ?? state.blur,
           hemianopia: cmd.hemianopia ?? state.hemianopia,
           zoom: cmd.zoom ?? state.zoom,
+          dimOverlay: cmd.dimOverlay ?? state.dimOverlay,
+          boldText: cmd.boldText ?? state.boldText,
+          reduceMotion: cmd.reduceMotion ?? state.reduceMotion,
           intensities: cmd.intensities ? { ...state.intensities, ...cmd.intensities } : state.intensities,
         };
         applyAll();

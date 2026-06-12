@@ -51,6 +51,9 @@ export function ActiveModes({ state, onRemove, onReset, onIntensityChange }: Pro
   if (state.brightness !== null) active.push({ label: `Brightness ${Math.round(state.brightness * 100)}%`, icon: '☀️', key: 'brightness' });
   if (state.zoom) active.push({ ...ZOOM_LABELS[state.zoom], key: 'zoom', intensityKey: 'zoom' });
   if (state.hemianopia) active.push({ label: HEMIANOPIA_LABELS[state.hemianopia], icon: '🕶️', key: 'hemianopia' });
+  if (state.dimOverlay) active.push({ label: 'Light Sensitivity Dimmer', icon: '🕯️', key: 'dimOverlay', intensityKey: 'dimOverlay' });
+  if (state.boldText) active.push({ label: 'Bold Text', icon: '🔤', key: 'boldText' });
+  if (state.reduceMotion) active.push({ label: 'Reduced Motion', icon: '🧘', key: 'reduceMotion' });
 
   if (!active.length) {
     return (

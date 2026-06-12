@@ -45,6 +45,9 @@ function getActiveFilters(state) {
   }
   if (state.zoom) items.push({ key: 'zoom', label: ZOOM_LABELS[state.zoom] ?? state.zoom, intensityKey: 'zoom' });
   if (state.hemianopia) items.push({ key: 'hemianopia', label: HEMIANOPIA_LABELS[state.hemianopia] ?? state.hemianopia, intensityKey: null });
+  if (state.dimOverlay) items.push({ key: 'dimOverlay', label: 'Light Sensitivity Dimmer', intensityKey: 'dimOverlay' });
+  if (state.boldText) items.push({ key: 'boldText', label: 'Bold Text', intensityKey: null });
+  if (state.reduceMotion) items.push({ key: 'reduceMotion', label: 'Reduced Motion', intensityKey: null });
   return items;
 }
 

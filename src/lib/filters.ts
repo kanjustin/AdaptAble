@@ -103,6 +103,75 @@ export function applyFilters(state: FilterState): void {
 
   applyZoom(state.zoom, state.intensities.zoom);
   applyHemianopia(state.hemianopia);
+  applyDimOverlay(state.dimOverlay, state.intensities.dimOverlay);
+  applyBoldText(state.boldText);
+  applyReduceMotion(state.reduceMotion);
+}
+
+// Photophobia/migraine: a non-inverting dark overlay that dims the page without
+// flipping colors (unlike darkMode's invert+hue-rotate).
+export function applyDimOverlay(active: boolean, intensity: number): void {
+  let overlay = document.getElementById('vv-dim-overlay');
+
+  if (!active) {
+    if (overlay) overlay.remove();
+    return;
+  }
+
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'vv-dim-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:999997;pointer-events:none;background:black;';
+    document.body.appendChild(overlay);
+  }
+  overlay.style.opacity = (0.15 + intensity * 0.45).toFixed(2);
+}
+
+const BOLD_TEXT_CSS = `body, p, span, a, li, h1, h2, h3, h4, h5, h6, label, button, td, th, input, textarea {
+  font-weight: 600 !important;
+}`;
+
+// Astigmatism/presbyopia: thicker text is easier to resolve when edges look smeared.
+export function applyBoldText(active: boolean): void {
+  let style = document.getElementById('vv-bold-text-style');
+
+  if (!active) {
+    if (style) style.remove();
+    return;
+  }
+
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'vv-bold-text-style';
+    style.textContent = BOLD_TEXT_CSS;
+    document.head.appendChild(style);
+  }
+}
+
+const REDUCE_MOTION_CSS = `*, *::before, *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}`;
+
+// Vestibular/motion sensitivity: kill animations/transitions and pause autoplay video.
+export function applyReduceMotion(active: boolean): void {
+  let style = document.getElementById('vv-reduce-motion-style');
+
+  if (!active) {
+    if (style) style.remove();
+    return;
+  }
+
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'vv-reduce-motion-style';
+    style.textContent = REDUCE_MOTION_CSS;
+    document.head.appendChild(style);
+  }
+
+  document.querySelectorAll('video[autoplay]').forEach(v => (v as HTMLVideoElement).pause());
 }
 
 // Uses the CSS `zoom` property (not `transform: scale`) for full-page magnification —
@@ -196,4 +265,10 @@ export function resetFilters(): void {
   if (zoomOverlay) zoomOverlay.remove();
   const hemiOverlay = document.getElementById('vv-hemianopia-overlay');
   if (hemiOverlay) hemiOverlay.remove();
+  const dimOverlay = document.getElementById('vv-dim-overlay');
+  if (dimOverlay) dimOverlay.remove();
+  const boldTextStyle = document.getElementById('vv-bold-text-style');
+  if (boldTextStyle) boldTextStyle.remove();
+  const reduceMotionStyle = document.getElementById('vv-reduce-motion-style');
+  if (reduceMotionStyle) reduceMotionStyle.remove();
 }

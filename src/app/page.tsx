@@ -25,6 +25,9 @@ const SUPPORTED_ADAPTATIONS = [
     { label: 'High Contrast', desc: 'Boosts contrast 150%', key: 'highContrast', value: true },
     { label: 'Warm Tone', desc: 'Reduces blue light', key: 'warmTone', value: true },
     { label: 'Invert Colors', desc: 'Full color inversion', key: 'invertColors', value: true },
+    { label: 'Light Sensitivity', desc: 'Dims the page without inverting', key: 'dimOverlay', value: true },
+    { label: 'Bold Text', desc: 'Thicker text for astigmatism/presbyopia', key: 'boldText', value: true },
+    { label: 'Reduce Motion', desc: 'Stops animations & autoplay video', key: 'reduceMotion', value: true },
   ]},
 ] as const;
 
@@ -60,6 +63,9 @@ export default function Home() {
         blur: merge(cmd.blur, prev.blur),
         hemianopia: merge(cmd.hemianopia, prev.hemianopia),
         zoom: merge(cmd.zoom, prev.zoom),
+        dimOverlay: merge(cmd.dimOverlay, prev.dimOverlay),
+        boldText: merge(cmd.boldText, prev.boldText),
+        reduceMotion: merge(cmd.reduceMotion, prev.reduceMotion),
         intensities: cmd.intensities ? { ...prev.intensities, ...cmd.intensities } : prev.intensities,
       };
       applyFilters(next);
@@ -79,6 +85,9 @@ export default function Home() {
       else if (key === 'zoom') next.zoom = null;
       else if (key === 'blur') next.blur = false;
       else if (key === 'hemianopia') next.hemianopia = null;
+      else if (key === 'dimOverlay') next.dimOverlay = false;
+      else if (key === 'boldText') next.boldText = false;
+      else if (key === 'reduceMotion') next.reduceMotion = false;
       applyFilters(next);
       return next;
     });
@@ -119,6 +128,9 @@ export default function Home() {
       else if (key === 'warmTone') next.warmTone = !prev.warmTone;
       else if (key === 'invertColors') next.invertColors = !prev.invertColors;
       else if (key === 'blur') next.blur = !prev.blur;
+      else if (key === 'dimOverlay') next.dimOverlay = !prev.dimOverlay;
+      else if (key === 'boldText') next.boldText = !prev.boldText;
+      else if (key === 'reduceMotion') next.reduceMotion = !prev.reduceMotion;
       applyFilters(next);
       return next;
     });
