@@ -77,6 +77,23 @@ Commands stack. Say "dark mode" then "high contrast" and both apply.
 
 ---
 
+## Chrome Extension (use on any site)
+
+The `extension/` folder is a Manifest V3 extension that applies the same voice-controlled
+filters to any webpage, not just the VoiceVision demo site.
+
+1. Open `chrome://extensions`
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked** → select the `extension/` folder
+4. Pin the VoiceVision icon, open it on any site, click the mic and speak a command
+
+The popup calls the same `/api/interpret` endpoint as the web app and forwards the
+returned command to a content script injected into the active page, which applies
+color-blindness filters, dark mode, contrast/brightness/warmth, invert, and the
+center/peripheral/full zoom overlays directly to that page.
+
+---
+
 ## Browser Support
 
 **Works:** Chrome 25+, Edge (Chromium)  

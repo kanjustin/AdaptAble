@@ -12,6 +12,12 @@ const MODE_LABELS = {
   achromatopsia: 'Grayscale',
 };
 
+const ZOOM_LABELS = {
+  center: 'Central Vision Loss',
+  peripheral: 'Tunnel Vision',
+  full: 'Magnified',
+};
+
 function renderBadges(state) {
   if (!state) return;
   const active = [];
@@ -21,6 +27,7 @@ function renderBadges(state) {
   if (state.warmTone) active.push('Warm Tone');
   if (state.invertColors) active.push('Inverted');
   if (state.brightness !== null && state.brightness !== undefined) active.push(`Brightness ${state.brightness}`);
+  if (state.zoom) active.push(ZOOM_LABELS[state.zoom] ?? state.zoom);
 
   badgesEl.innerHTML = active.length
     ? active.map((label) => `<span class="badge">${label}</span>`).join('')
