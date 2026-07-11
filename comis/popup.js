@@ -67,8 +67,19 @@ function sanitizeCommand(raw) {
 async function sendToActiveTab(message) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (!tab?.id) return null;
-  try { return await chrome.tabs.sendMessage(tab.id, message); }
-  catch { return null; } // no content script (chrome://, store pages, etc.)
+  try {
+    return await chrome.tabs.sendMessage(tab.id, message);
+  } catch {
+    // No content script yet (tab was open before the extension loaded, or an SPA
+    // that hasn't triggered it). activeTab lets us inject it on demand — the guards in
+    // content.js / simplify.js make re-injection a safe no-op.
+    try {
+      await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['simplify.js', 'content.js'] });
+      return await chrome.tabs.sendMessage(tab.id, message);
+    } catch {
+      return null; // genuinely restricted page (chrome://, Web Store, New Tab, PDF viewer)
+    }
+  }
 }
 
 // ---- API call with hard timeout -------------------------------------------
