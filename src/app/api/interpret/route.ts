@@ -104,7 +104,9 @@ export async function POST(req: NextRequest) {
 
     const response = await withTimeout(
       ai.models.generateContent({
-        model: 'gemini-2.5-flash-lite',
+        // `-latest` alias tracks the current fast Flash model so we don't break when a
+        // pinned version is retired (gemini-2.5-flash-lite was closed to new keys).
+        model: 'gemini-flash-lite-latest',
         contents: [{ role: 'user', parts: [{ text: userContent }] }],
         config: {
           systemInstruction: SYSTEM_PROMPT,

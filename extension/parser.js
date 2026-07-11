@@ -90,7 +90,7 @@
   }
 
   // ---- Safety: prompt-injection / unsafe requests -------------------------
-  const INJECTION = /(ignore (all |your )?(previous|prior)|system prompt|reveal (your|the) (prompt|instructions|api key)|run (javascript|js|code|a script)|eval\s*\(|<script|drop table|jailbreak|\bsudo\b|api[\s_-]?key|execute (code|the following))/i;
+  const INJECTION = /(ignore (all |your )?(previous|prior)|system prompt|reveal (your|the) (prompt|instructions|api key)|run (javascript|js|code|this|a|the)?\s*script|run (javascript|js|code)|\balert\s*\(|eval\s*\(|<script|drop table|jailbreak|\bsudo\b|api[\s_-]?key|execute (code|the following|this))/i;
 
   // Words that signal the request is at least *about* using/reading the page —
   // used to decide "ambiguous accessibility → ask the AI" vs "not our job".
@@ -139,52 +139,53 @@
 
     // ---- Read aloud ----
     { id: 'read-stop', category: 'read', match: /\b(stop (reading|talking|the voice|speaking)|be quiet|quiet|shut up|stop reading)\b/, apply: (c) => { c.readAloud = 'stop'; } },
-    { id: 'read-start', category: 'read', match: /\b(read (this|it|the page|aloud|out loud|to me|the (important|main) (part|bit|content))|speak the (page|text)|say the words)\b/, apply: (c) => { c.readAloud = 'start'; } },
+    // Require an explicit read-aloud signal so "can't read this" does NOT trigger it.
+    { id: 'read-start', category: 'read', match: /\b(read\b.{0,25}\b(aloud|out loud|to me)|read (me )?the (important|main) (part|bit|content)|read aloud|speak the (page|text)|say the words)/, apply: (c) => { c.readAloud = 'start'; } },
 
     // ---- Simplify page (the centerpiece) ----
     {
       id: 'simplify', category: 'simplify',
-      match: /\b(simplif|too (much|busy|cluttered)|too much going on|overwhelm|clutter|declutter|distracting|reader mode|clean( it| this)? up|just (the )?(important|main)|show (me )?only|remove the (ads|clutter|distractions)|focus on the (content|article|text)|easier (for .{1,30} )?to read|easier to (read|focus on)|make .{1,20} readable|hard to read this page)\b/,
+      match: /\b(simplif|too (much|busy|cluttered)|too much going on|overwhelm|clutter|declutter|distracting|reader mode|clean( it| this)? up|just (the )?(important|main)|show (me )?only|remove the (ads|clutter|distractions)|focus on the (content|article|text)|easier (for .{1,30} )?to read|easier to (read|focus on)|make .{1,20} readable|hard to read this page)/,
       apply: (c) => { c.simplify = true; },
     },
 
     // ---- Text size ----
     { id: 'text-smaller', category: 'text', match: /\b(smaller|too big|text is huge|shrink|reduce (the )?(text|font)|zoom out|less zoom)\b/, apply: (c, s) => { c.textScale = stepDown(s && s.textScale, 1.5, 0.25, 1.0, 1.0); } },
-    { id: 'text-bigger', category: 'text', match: /\b(bigger|larger|too small|tiny|can'?t read|hard to read|enlarge|increase (the )?(text|font|size)|make (everything|it|the text|things) bigger|text is small|letters are (tiny|small)|zoom in|magnif|need (it|everything) bigger)\b/, apply: (c, s) => { c.textScale = stepUp(s && s.textScale, 1.25, 0.25, 2.5); } },
+    { id: 'text-bigger', category: 'text', match: /\b(bigger|larger|too small|tiny|can'?t read|hard to read|enlarge|increase (the )?(text|font|size)|make (everything|it|the text|things) bigger|text is small|letters are (tiny|small)|zoom in|magnif|need (it|everything) bigger)/, apply: (c, s) => { c.textScale = stepUp(s && s.textScale, 1.25, 0.25, 2.5); } },
 
     // ---- Spacing ----
-    { id: 'line-spacing', category: 'spacing', match: /\b(line spacing|space between (the )?lines|lines (are )?too close|lines cramped|spread out the lines|double spac)\b/, apply: (c, s) => { c.lineSpacing = stepUp(s && s.lineSpacing, 1.8, 0.3, 2.4); } },
+    { id: 'line-spacing', category: 'spacing', match: /\b(line spacing|space between (the )?lines|lines (are )?too close|lines cramped|spread (out )?the lines( out)?|spread out the lines|double spac)/, apply: (c, s) => { c.lineSpacing = stepUp(s && s.lineSpacing, 1.8, 0.3, 2.4); } },
     { id: 'letter-spacing', category: 'spacing', match: /\b(letter spacing|space between (the )?letters|letters (are )?too close|letters cramped)\b/, apply: (c, s) => { c.letterSpacing = stepUp(s && s.letterSpacing, 0.06, 0.03, 0.12); } },
     { id: 'para-spacing', category: 'spacing', match: /\b(paragraph spacing|space between paragraphs|paragraphs (are )?too close)\b/, apply: (c, s) => { c.paraSpacing = stepUp(s && s.paraSpacing, 1.2, 0.6, 2.5); } },
     { id: 'bold-text', category: 'text', match: /\b(bold(er)? text|thicker text|make the text bold|letters look thin|text is (too )?thin|heavier text)\b/, apply: (c) => { c.boldText = true; } },
 
     // ---- Contrast ----
     { id: 'contrast-less', category: 'contrast', match: /\b(less contrast|too much contrast|contrast is too (high|strong))\b/, apply: (c, s) => { adjustIntensity(c, s, 'highContrast', -0.2, 'highContrast'); } },
-    { id: 'contrast-more', category: 'contrast', match: /\b(more contrast|higher contrast|increase (the )?contrast|low contrast|washed out|faded|text is (faint|too light|hard to see)|colou?rs? (are )?(dull|washed))\b/, apply: (c, s) => { c.highContrast = true; if (s && s.highContrast) adjustIntensity(c, s, 'highContrast', 0.2, 'highContrast'); } },
+    { id: 'contrast-more', category: 'contrast', match: /\b(high contrast|more contrast|higher contrast|increase (the )?contrast|low contrast|washed out|faded|text is (faint|too light|hard to see)|colou?rs? (are )?(dull|washed))/, apply: (c, s) => { c.highContrast = true; if (s && s.highContrast) adjustIntensity(c, s, 'highContrast', 0.2, 'highContrast'); } },
 
     // ---- Brightness / dim ("too bright") ----
-    { id: 'dim', category: 'brightness', match: /\b(too bright|page is (too )?bright|screen is (blinding|too bright)|the white hurts|white hurts my eyes|dim (it|the (page|screen))|lower (the )?brightness|less bright|tone down the (glare|brightness)|reduce (the )?glare|it'?s too bright)\b/, apply: (c, s) => { c.dimOverlay = true; if (s && s.dimOverlay) adjustIntensity(c, s, 'dimOverlay', 0.15, 'dimOverlay'); } },
+    { id: 'dim', category: 'brightness', match: /\b(too bright|page is (too )?bright|screen is (blinding|too bright)|the white hurts|white hurts my eyes|bright white|dim (it|the (page|screen))|lower (the )?brightness|less bright|tone down the (glare|brightness)|reduce (the )?glare|it'?s too bright|to bright)/, apply: (c, s) => { c.dimOverlay = true; if (s && s.dimOverlay) adjustIntensity(c, s, 'dimOverlay', 0.15, 'dimOverlay'); } },
     { id: 'dim-less', category: 'brightness', match: /\b(a little less (bright|dim)|less dim|not so dark|too dim|brighten (it|the page) up)\b/, apply: (c, s) => { adjustIntensity(c, s, 'dimOverlay', -0.15, 'dimOverlay'); } },
 
-    // ---- Dark mode ----
-    { id: 'dark-on', category: 'dark', match: /\b(dark mode|make it dark|too white|switch to dark|darken the page|night mode)\b/, apply: (c) => { c.darkMode = true; } },
+    // ---- Dark mode ---- (no trailing \b so "make it darker" matches "make it dark")
+    { id: 'dark-on', category: 'dark', match: /\b(dark mode|make it dark|too white|switch to dark|darken the page|night mode)/, apply: (c) => { c.darkMode = true; } },
 
     // ---- Warm ----
     { id: 'warm', category: 'warm', match: /\b(warm(er)?( it up| tone| colou?rs?)?|reduce (the )?blue light|blue light|less blue|yellow tint|easier on (my|the) eyes at night)\b/, apply: (c) => { c.warmTone = true; } },
 
     // ---- Reduce motion ----
-    { id: 'reduce-motion', category: 'motion', match: /\b(stop (all )?(the )?(animation|animations|movement|moving|motion)|reduce motion|too much (movement|motion)|things (are )?moving|stop the page from moving|animations? (make me|are) (dizzy|distracting|annoying)|motion sick|makes me dizzy|flashing|blinking)\b/, apply: (c) => { c.reduceMotion = true; } },
+    { id: 'reduce-motion', category: 'motion', match: /\b(stop (all )?(the )?(animation|animations|movement|moving|motion)|reduce (the )?motion|too much (movement|motion)|things (are )?moving|(page|it) (keeps|is) moving|keeps moving|stop the page from moving|animations? (make me|are) (dizzy|distracting|annoying)|motion sick|makes me dizzy|flashing|blinking)/, apply: (c) => { c.reduceMotion = true; } },
 
     // ---- Focus / place-keeping ----
     { id: 'focus', category: 'focus', match: /\b(help me focus|hard to focus|keep losing (my|where) (place|i am)|losing my place|highlight where i am|can'?t keep my place|focus (highlight|assist)|show me where i(')?m reading)\b/, apply: (c) => { c.focusHighlight = true; } },
 
     // ---- Color distinction (ASSIST — never a simulation here) ----
-    { id: 'color-distinction', category: 'color', match: /\b(can'?t (tell|distinguish|see the difference between)|distinguish (the )?colou?rs?|tell (them |these )?colou?rs? apart|colou?rs? (all )?look (the same|alike)|red (and|from|vs) green|hard to tell (the )?colou?rs?|colou?rblind|colou?r blind|help (me )?(with|tell) colou?rs?|colou?r distinction)\b/, apply: (c) => { c.colorDistinction = true; } },
+    { id: 'color-distinction', category: 'color', match: /\b(can'?t (tell|distinguish|see the difference between)|distinguish (the )?colou?rs?|tell (them |these )?colou?rs? apart|colou?rs? (all )?look (the same|alike)|red (and|from|vs) green|hard to tell (the )?colou?rs?|colou?rblind|colou?r blind|improve colou?r distinction|help (me )?(with|tell) colou?rs?|colou?r distinction)/, apply: (c) => { c.colorDistinction = true; } },
 
     // ---- Content repositioning ----
-    { id: 'move-right', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?right|content on (the|my) right|shift (it|the content) right|trouble seeing the left|keep (the )?controls on (my|the) right|hard to see (the )?left side)\b/, apply: (c) => { c.reposition = 'right'; } },
-    { id: 'move-left', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?left|content on (the|my) left|shift (it|the content) left|trouble seeing the right|hard to see (the )?right side)\b/, apply: (c) => { c.reposition = 'left'; } },
-    { id: 'move-center', category: 'reposition', match: /\b(center the (content|text|page)|move (it|the content) (back to )?(the )?(middle|center))\b/, apply: (c) => { c.reposition = 'center'; } },
+    { id: 'move-right', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?right|content on (the|my) right|shift (the )?(content|text|it) (to the )?right|trouble seeing the left|keep (the )?controls on (my|the) right|hard to see (the )?left side)/, apply: (c) => { c.reposition = 'right'; } },
+    { id: 'move-left', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?left|content on (the|my) left|shift (the )?(content|text|it) (to the )?left|trouble seeing the right|hard to see (the )?right side)/, apply: (c) => { c.reposition = 'left'; } },
+    { id: 'move-center', category: 'reposition', match: /\b(center the (content|text|page)|move (it|the content) (back to )?(the )?(middle|center))/, apply: (c) => { c.reposition = 'center'; } },
 
     // ---- Developer Simulation Mode (explicit only) ----
     { id: 'sim-deuter', category: 'simulation', match: /\b(simulate|show me|preview) (deuteranopia|red-?green (colou?r ?)?blindness)|deuteranopia simulation\b/, apply: (c) => { c.colorMode = 'deuteranopia'; } },

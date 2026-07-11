@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node tests/simplify.test.mjs && node evals/run.mjs --assert",
+    "eval": "node evals/run.mjs",
+    "eval:api": "node evals/run.mjs --api",
+    "pack:extension": "cd extension && zip -r -FS ../voicevision-extension.zip . -x '.*'"
   },
   "dependencies": {
     "@google/genai": "^2.8.0",
