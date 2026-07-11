@@ -103,6 +103,12 @@
     { "text": "bolder text", "category": "synonym", "status": "ok", "keys": { "boldText": true } },
     { "text": "shift the content to the left", "category": "synonym", "status": "ok", "keys": { "reposition": "left" } },
 
+    { "text": "increase the spacing", "category": "demo", "status": "ok", "keys": { "lineSpacing": "+" } },
+    { "text": "dim the bright colors", "category": "demo", "status": "ok", "keys": { "dimOverlay": true } },
+    { "text": "move the important content to the right", "category": "demo", "status": "ok", "keys": { "reposition": "right" } },
+    { "text": "this page is overwhelming show me only what matters", "category": "demo", "status": "ok", "keys": { "simplify": true } },
+    { "text": "read the main content aloud", "category": "demo", "status": "ok", "keys": { "readAloud": "start" } },
+
     { "text": "", "category": "empty", "status": "empty" },
     { "text": "   ", "category": "empty", "status": "empty" }
   ]

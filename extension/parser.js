@@ -154,7 +154,7 @@
     { id: 'text-bigger', category: 'text', match: /\b(bigger|larger|too small|tiny|can'?t read|hard to read|enlarge|increase (the )?(text|font|size)|make (everything|it|the text|things) bigger|text is small|letters are (tiny|small)|zoom in|magnif|need (it|everything) bigger)/, apply: (c, s) => { c.textScale = stepUp(s && s.textScale, 1.25, 0.25, 2.5); } },
 
     // ---- Spacing ----
-    { id: 'line-spacing', category: 'spacing', match: /\b(line spacing|space between (the )?lines|lines (are )?too close|lines cramped|spread (out )?the lines( out)?|spread out the lines|double spac)/, apply: (c, s) => { c.lineSpacing = stepUp(s && s.lineSpacing, 1.8, 0.3, 2.4); } },
+    { id: 'line-spacing', category: 'spacing', match: /\b(line spacing|space between (the )?lines|lines (are )?too close|lines cramped|spread (out )?the lines( out)?|spread out the lines|double spac|(more|increase|add|extra|the) (the )?spacing|increase (the )?spacing)/, apply: (c, s) => { c.lineSpacing = stepUp(s && s.lineSpacing, 1.8, 0.3, 2.4); } },
     { id: 'letter-spacing', category: 'spacing', match: /\b(letter spacing|space between (the )?letters|letters (are )?too close|letters cramped)\b/, apply: (c, s) => { c.letterSpacing = stepUp(s && s.letterSpacing, 0.06, 0.03, 0.12); } },
     { id: 'para-spacing', category: 'spacing', match: /\b(paragraph spacing|space between paragraphs|paragraphs (are )?too close)\b/, apply: (c, s) => { c.paraSpacing = stepUp(s && s.paraSpacing, 1.2, 0.6, 2.5); } },
     { id: 'bold-text', category: 'text', match: /\b(bold(er)? text|thicker text|make the text bold|letters look thin|text is (too )?thin|heavier text)\b/, apply: (c) => { c.boldText = true; } },
@@ -164,7 +164,7 @@
     { id: 'contrast-more', category: 'contrast', match: /\b(high contrast|more contrast|higher contrast|increase (the )?contrast|low contrast|washed out|faded|text is (faint|too light|hard to see)|colou?rs? (are )?(dull|washed))/, apply: (c, s) => { c.highContrast = true; if (s && s.highContrast) adjustIntensity(c, s, 'highContrast', 0.2, 'highContrast'); } },
 
     // ---- Brightness / dim ("too bright") ----
-    { id: 'dim', category: 'brightness', match: /\b(too bright|page is (too )?bright|screen is (blinding|too bright)|the white hurts|white hurts my eyes|bright white|dim (it|the (page|screen))|lower (the )?brightness|less bright|tone down the (glare|brightness)|reduce (the )?glare|it'?s too bright|to bright)/, apply: (c, s) => { c.dimOverlay = true; if (s && s.dimOverlay) adjustIntensity(c, s, 'dimOverlay', 0.15, 'dimOverlay'); } },
+    { id: 'dim', category: 'brightness', match: /\b(too bright|page is (too )?bright|screen is (blinding|too bright)|the white hurts|white hurts my eyes|bright white|dim (it|the (page|screen|bright|colou?rs?|lights))|dim the|dimmer|make it dimmer|lower (the )?brightness|less bright|tone down the (glare|brightness|bright)|reduce (the )?glare|it'?s too bright|to bright)/, apply: (c, s) => { c.dimOverlay = true; if (s && s.dimOverlay) adjustIntensity(c, s, 'dimOverlay', 0.15, 'dimOverlay'); } },
     { id: 'dim-less', category: 'brightness', match: /\b(a little less (bright|dim)|less dim|not so dark|too dim|brighten (it|the page) up)\b/, apply: (c, s) => { adjustIntensity(c, s, 'dimOverlay', -0.15, 'dimOverlay'); } },
 
     // ---- Dark mode ---- (no trailing \b so "make it darker" matches "make it dark")
@@ -183,8 +183,8 @@
     { id: 'color-distinction', category: 'color', match: /\b(can'?t (tell|distinguish|see the difference between)|distinguish (the )?colou?rs?|tell (them |these )?colou?rs? apart|colou?rs? (all )?look (the same|alike)|red (and|from|vs) green|hard to tell (the )?colou?rs?|colou?rblind|colou?r blind|improve colou?r distinction|help (me )?(with|tell) colou?rs?|colou?r distinction)/, apply: (c) => { c.colorDistinction = true; } },
 
     // ---- Content repositioning ----
-    { id: 'move-right', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?right|content on (the|my) right|shift (the )?(content|text|it) (to the )?right|trouble seeing the left|keep (the )?controls on (my|the) right|hard to see (the )?left side)/, apply: (c) => { c.reposition = 'right'; } },
-    { id: 'move-left', category: 'reposition', match: /\b(move (the )?(content|text|article|it) (to the )?left|content on (the|my) left|shift (the )?(content|text|it) (to the )?left|trouble seeing the right|hard to see (the )?right side)/, apply: (c) => { c.reposition = 'left'; } },
+    { id: 'move-right', category: 'reposition', match: /\b(move (the )?(important |main |primary )?(content|text|article|it) (to the )?right|content on (the|my) right|shift (the )?(content|text|it) (to the )?right|trouble seeing the left|keep (the )?controls on (my|the) right|hard to see (the )?left side)/, apply: (c) => { c.reposition = 'right'; } },
+    { id: 'move-left', category: 'reposition', match: /\b(move (the )?(important |main |primary )?(content|text|article|it) (to the )?left|content on (the|my) left|shift (the )?(content|text|it) (to the )?left|trouble seeing the right|hard to see (the )?right side)/, apply: (c) => { c.reposition = 'left'; } },
     { id: 'move-center', category: 'reposition', match: /\b(center the (content|text|page)|move (it|the content) (back to )?(the )?(middle|center))/, apply: (c) => { c.reposition = 'center'; } },
 
     // ---- Developer Simulation Mode (explicit only) ----
