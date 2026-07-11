@@ -723,25 +723,30 @@
       }
       [${MAIN_ATTR}]{
         display:block !important;
-        max-width:72ch !important;
+        /* Responsive, consistent reading width — never overflows the viewport, never a tiny strip. */
+        max-width:min(70ch, 94vw) !important;
         width:auto !important;
         flex:1 1 100% !important;
         grid-column:1 / -1 !important;
-        margin:28px auto !important;
-        padding:32px 40px !important;
+        margin:24px auto !important;
+        padding:clamp(16px, 3.5vw, 36px) !important;
         float:none !important;
         position:static !important;
         box-sizing:border-box !important;
         background:#ffffff !important;
         color:#1a1a1a !important;
-        font-size:1.18rem !important;
-        line-height:1.75 !important;
+        font-size:1.08rem !important;
+        line-height:1.7 !important;
+        overflow-wrap:anywhere !important;
         border-radius:10px !important;
         box-shadow:0 2px 20px rgba(0,0,0,0.10) !important;
       }
-      /* Linearize any multi-column layout INSIDE the chosen content, so a title/text
-         column can't be squeezed into a narrow strip on complex pages (e.g. product pages). */
-      [${MAIN_ATTR}] :where(div,section,ul,ol,form,article,aside){display:block !important;float:none !important;width:auto !important;max-width:100% !important;}
+      /* Stack only the TOP-LEVEL columns of the chosen content (fixes the "narrow title"
+         squeeze on product pages) — WITHOUT deeply flattening nested layout, so the result
+         stays consistent across sites. */
+      [${MAIN_ATTR}] > :where(div,section,article,aside,form){display:block !important;float:none !important;width:auto !important;max-width:100% !important;margin-left:0 !important;margin-right:0 !important;}
+      /* Anything deeper just must not overflow the column or float. */
+      [${MAIN_ATTR}] :where(div,section,aside,figure,img,video,pre,table,iframe){float:none !important;max-width:100% !important;}
       [${MAIN_ATTR}] :where(p,li,dd,dt,blockquote,td,th,figcaption,span){color:#1f2937 !important;}
       [${MAIN_ATTR}] :where(h1,h2,h3,h4,h5,h6){color:#111827 !important;}
       [${MAIN_ATTR}] a{color:#1d4ed8 !important;}
