@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VoiceVision Assist — Browser Playground</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef1f6}
+  /* ---- cluttered demo content (this is what gets adapted) ---- */
+  #vv-content{background:#fffdf5;color:#9a9a90;font-size:13px;line-height:1.35;min-height:100vh;padding-bottom:120px}
+  #vv-content a{color:#a0a4b8}
+  .pnav{background:#fef9e7;border-bottom:1px solid #f0e9cf;padding:8px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .plogo{font-weight:800;color:#c9a227;font-size:16px}
+  .pnav nav{display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.pnav nav a{text-decoration:none}
+  .pticker{overflow:hidden;white-space:nowrap;background:#fff3cd;border-bottom:1px solid #f0e9cf}
+  .pticker span{display:inline-block;padding:4px 0;animation:scroll 12s linear infinite}
+  @keyframes scroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+  .playout{display:grid;grid-template-columns:170px 1fr 190px;gap:12px;padding:12px}
+  .pside{background:#fef9e7;border:1px solid #f3ecd2;border-radius:6px;padding:10px;font-size:12px}
+  .pside h4{margin:4px 0 6px;color:#b58e1f}.pside ul{margin:0;padding-left:15px}
+  .ppromo{background:#fff3cd;padding:8px;border-radius:6px}
+  main{background:#fffef9;border:1px solid #f3ecd2;border-radius:6px;padding:16px}
+  article h1{color:#8a7a3a;font-size:21px;margin:0 0 6px}
+  article h2{color:#97853f;font-size:15px;margin:16px 0 6px}article p{margin:10px 0}
+  .pactions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .pbtn{background:#2563eb;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;cursor:pointer;font-size:12px}
+  .pbtn.sec{background:#e5e7eb;color:#374151}
+  .psw{display:inline-block;width:42px;height:13px;border-radius:3px;vertical-align:middle}
+  .pbar{margin:4px 0;font-size:12px}
+  .pcookie{position:fixed;left:0;right:0;bottom:0;z-index:41;background:#1f2937;color:#e5e7eb;padding:11px 14px;display:flex;gap:12px;align-items:center;font-size:12px}
+  .pcookie .pbtn{margin-left:auto}
+  .ppopup{position:fixed;inset:0;z-index:42;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+  .ppopup .pbox{position:relative;background:#fff;color:#333;border-radius:10px;padding:20px;width:280px;text-align:center}
+  .pclose{position:absolute;top:8px;right:10px;border:none;background:#eee;border-radius:999px;width:30px;height:30px;font-size:18px;cursor:pointer}
+  .vv-reading{background:#fde68a!important;color:#111!important;box-shadow:0 0 0 4px #fde68a!important;border-radius:3px}
+  /* ---- control panel (NOT transformed; id starts with vv- so Simplify skips it) ---- */
+  #vv-panel{position:fixed;top:16px;right:16px;width:300px;max-height:calc(100vh - 32px);overflow:auto;z-index:2147483000;background:#0f1117;color:#f3f5f9;border-radius:16px;box-shadow:0 12px 50px rgba(0,0,0,.5);padding:16px;font-size:13px}
+  #vv-panel h2{margin:0 0 2px;font-size:16px;font-weight:800}#vv-panel h2 span{color:#4f8cff}
+  #vv-panel .sub{color:#9aa6bd;font-size:11px;margin:0 0 12px}
+  .pg-bar{display:flex;gap:6px}
+  #pg-input{flex:1;min-width:0;background:#1b2130;border:1px solid #313a4f;color:#f3f5f9;border-radius:10px;padding:9px 11px;font-size:13px}
+  #pg-apply{border:none;border-radius:10px;background:#3b82f6;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}
+  .pg-said{margin:8px 0 0;font-size:12px;color:#cfd6e6;min-height:15px}
+  .pg-trace{margin:6px 0 0;font-size:12px;color:#9aa6bd;min-height:16px;line-height:1.5}
+  .pg-pill{display:inline-block;background:#10331f;color:#7ee2a8;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:700}
+  .pg-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#9aa6bd;font-weight:700;margin:12px 0 6px}
+  .pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .pg-qa{padding:9px 8px;border:1px solid #313a4f;background:#1b2130;color:#f3f5f9;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;text-align:left}
+  .pg-qa:hover{background:#232b3d;border-color:#3b82f6}
+  .pg-qa.wide{grid-column:1/-1}.pg-qa.primary{background:#3b82f6;border-color:#3b82f6;color:#fff}
+  .pg-active{margin:8px 0 0;font-size:12px;color:#cfd6e6;background:#1b2130;border:1px solid #313a4f;border-radius:9px;padding:8px 10px;min-height:16px}
+  .pg-row{display:flex;gap:6px;margin-top:8px}.pg-row .pg-qa{flex:1;text-align:center}
+  #pg-undo:disabled{opacity:.5;cursor:default}
+</style></head>
+<body>
+<div id="vv-content">
+<header class="pnav">
+  <span class="plogo">San Ramon Services</span>
+  <nav><a href="#">Home</a><a href="#">Utilities</a><a href="#">Permits</a><a href="#">Transit</a><a href="#">Health</a><a href="#">Library</a><a href="#">Parks</a><a href="#">Police</a><a href="#">Fire</a><a href="#">Waste</a><a href="#">Taxes</a><a href="#">Jobs</a><a href="#">Events</a><a href="#">Contact</a><a href="#">Login</a></nav>
+</header>
+<div class="pticker"><span>Breaking: Library hours extended • Water bill due Friday • Flu shots available • Senior shuttle sign-ups open •</span></div>
+<div class="playout">
+  <aside class="pside"><h4>Related</h4><ul><li><a href="#">Pay water bill</a></li><li><a href="#">Report an outage</a></li><li><a href="#">Trash schedule</a></li><li><a href="#">Senior transport</a></li><li><a href="#">Flu clinic</a></li><li><a href="#">Pharmacy refills</a></li><li><a href="#">Property tax</a></li><li><a href="#">Jury duty</a></li></ul></aside>
+  <main>
+    <article>
+      <h1>How to Refill a Prescription and Pay Your Utility Bill Online</h1>
+      <p>This guide explains, step by step, how residents can refill a prescription at the community pharmacy and pay a monthly utility bill without visiting an office in person. These services are available around the clock and are designed to be usable from a phone, tablet, or computer.</p>
+      <div class="pactions"><button class="pbtn">Refill prescription</button><button class="pbtn">Pay utility bill</button><button class="pbtn sec">Schedule shuttle</button></div>
+      <h2>Refilling a prescription</h2>
+      <p>To refill a prescription, you will need the prescription number printed on the side of your medicine bottle. Enter that number, confirm your date of birth, and choose whether you want to pick the medication up or have it delivered. Most refills are ready within four hours.</p>
+      <p>If you take several medications, you can enroll in synchronized refills so that all of your prescriptions are ready on the same day each month. This reduces the number of trips you need to make and makes it easier to keep track of what you have taken.</p>
+      <h2>Paying a utility bill</h2>
+      <p>To pay a utility bill, sign in with your account number and the last name on the account. You can pay a one-time amount, or set up automatic monthly payments. A receipt is emailed to you immediately, and your payment history is stored so you can review past bills at any time.</p>
+      <p>If your bill is higher than usual, you can request a review or apply for the low-income assistance program directly from the same page. Payment plans are available for households that need to spread a large balance over several months.</p>
+      <h2>Current service status</h2>
+      <div class="pchart">
+        <div class="pbar"><span class="psw" style="background:#22c55e"></span> Water portal — operating normally</div>
+        <div class="pbar"><span class="psw" style="background:#ef4444"></span> Prescription delivery — delayed today</div>
+        <div class="pbar"><span class="psw" style="background:#22c55e"></span> Senior shuttle — on schedule</div>
+        <svg width="300" height="90" role="img" aria-label="Weekly uptime">
+          <rect x="20" y="15" width="34" height="60" fill="#22c55e"></rect>
+          <rect x="70" y="40" width="34" height="35" fill="#ef4444"></rect>
+          <rect x="120" y="22" width="34" height="53" fill="#22c55e"></rect>
+          <rect x="170" y="46" width="34" height="29" fill="#ef4444"></rect>
+          <rect x="220" y="26" width="34" height="49" fill="#22c55e"></rect>
+        </svg>
+        <p style="font-size:11px">Green = up, red = down. (Color is the only cue here — a barrier for many users.)</p>
+      </div>
+    </article>
+  </main>
+  <aside class="pside"><h4>Sponsored</h4><p class="ppromo">Get 20% off home solar — click now!</p><h4>Weather</h4><p>Sunny, 78°F.</p><h4>Follow us</h4><ul><li><a href="#">Facebook</a></li><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">Nextdoor</a></li></ul></aside>
+</div>
+<div class="pcookie" id="pcookie">🍪 We use cookies to improve your experience.<button class="pbtn" onclick="this.parentElement.remove()">Accept</button></div>
+<div class="ppopup" id="ppopup" role="dialog" aria-modal="true" aria-label="Newsletter"><div class="pbox"><button class="pclose" onclick="document.getElementById('ppopup').remove()">×</button><h3>📬 Don't miss out!</h3><p>Subscribe to the weekly newsletter.</p><button class="pbtn" style="width:100%" onclick="document.getElementById('ppopup').remove()">Subscribe</button></div></div>
+</div>
+
+<div id="vv-panel">
+  <h2>Voice<span>Vision</span> Assist</h2>
+  <p class="sub">Browser playground — real parser &amp; Simplify engine from the extension.</p>
+  <div class="pg-bar">
+    <input id="pg-input" type="text" placeholder="Say what's hard… e.g. this is too small"/>
+    <button id="pg-apply">Apply</button>
+  </div>
+  <p class="pg-said" id="pg-said"></p>
+  <p class="pg-trace" id="pg-trace">Try a quick action, or type a request.</p>
+  <div class="pg-label">Quick actions</div>
+  <div class="pg-grid">
+    <button class="pg-qa primary wide" data-cmd="simplify this page">✨ Simplify this page</button>
+    <button class="pg-qa" data-cmd="make the text bigger">🔠 Larger text</button>
+    <button class="pg-qa" data-cmd="increase the spacing">↕ More spacing</button>
+    <button class="pg-qa" data-cmd="high contrast">◐ High contrast</button>
+    <button class="pg-qa" data-cmd="dark mode">🌙 Dark mode</button>
+    <button class="pg-qa" data-cmd="the page is too bright">🔅 Dim it</button>
+    <button class="pg-qa" data-cmd="warm colors">🔥 Warm colors</button>
+    <button class="pg-qa" data-cmd="stop all animations">🚫 Less motion</button>
+    <button class="pg-qa" data-cmd="help me focus">🎯 Focus</button>
+    <button class="pg-qa" data-cmd="improve color distinction">🎨 Color distinction</button>
+    <button class="pg-qa" data-cmd="move the important content to the right">➡ Move right</button>
+    <button class="pg-qa" data-cmd="read the main content aloud">🔊 Read aloud</button>
+  </div>
+  <div class="pg-label">Active adaptations</div>
+  <div class="pg-active" id="pg-active">None yet.</div>
+  <div class="pg-row">
+    <button class="pg-qa" id="pg-undo">↩ Undo</button>
+    <button class="pg-qa" id="pg-reset">⟲ Reset</button>
+  </div>
+</div>
+
+<script>/* --- real extension/parser.js --- */
+/**
+ * VoiceVision — Local deterministic command parser (Assist Mode).
+ *
+ * This is the PRIMARY interpretation path. It runs instantly, offline, with zero
+ * network calls, and covers the common accessibility commands. Only when it is not
+ * confident does the caller fall back to the Gemini API.
+ *
+ * IMPORTANT (product correction): in Assist Mode, symptom language like "I can't tell
+ * red from green" maps to color-DISTINCTION assistance — NOT to a colour-blindness
+ * *simulation*. Simulations live in a separate Developer Simulation Mode and are only
+ * triggered by explicit phrasing ("simulate deuteranopia").
+ *
+ * Shipped as a UMD module so the exact same code runs in the extension popup
+ * (window.VVParser) and in the Node evaluation harness (require('./parser.js')).
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.VVParser = api;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // ---- Command vocabulary -------------------------------------------------
+  // The command mirrors the applied state keys so the content script can merge it
+  // directly. Assist keys are additive to the original simulation-era keys.
+  function emptyCommand() {
+    return {
+      // assist — readability
+      textScale: null, // number 1.0–2.5 (null = no change)
+      lineSpacing: null, // number 1.4–2.4
+      letterSpacing: null, // number 0–0.12 (em)
+      paraSpacing: null, // number 0–2.5 (em)
+      boldText: null, // boolean
+      // assist — visual comfort
+      highContrast: null, // boolean
+      darkMode: null, // boolean
+      dimOverlay: null, // boolean ("too bright")
+      warmTone: null, // boolean (reduce blue light)
+      reduceMotion: null, // boolean
+      // assist — focus / structure
+      focusHighlight: null, // boolean
+      simplify: null, // boolean (Simplify Page)
+      reposition: null, // 'left' | 'right' | 'center'
+      colorDistinction: null, // boolean (assist, NOT a simulation)
+      readAloud: null, // 'start' | 'stop'
+      // developer simulation mode (explicit requests only)
+      colorMode: null, // 'deuteranopia'|'protanopia'|'tritanopia'|'achromatopsia'
+      hemianopia: null, // 'left'|'right'
+      zoom: null, // 'center'|'peripheral'|'full'
+      blur: null, // boolean (cataract simulation)
+      // relative-intensity nudges reuse the existing intensities map
+      intensities: null,
+      brightness: null,
+      // control
+      undo: false,
+      reset: false,
+      // meta (never applied to the DOM)
+      confidence: 0,
+      explanation: '',
+    };
+  }
+
+  // Off-value for each feature, used by negation ("turn off X") and validation.
+  const OFF_VALUE = {
+    textScale: null, lineSpacing: null, letterSpacing: null, paraSpacing: null,
+    boldText: false, highContrast: false, darkMode: false, dimOverlay: false,
+    warmTone: false, reduceMotion: false, focusHighlight: false, simplify: false,
+    reposition: null, colorDistinction: false, colorMode: null, hemianopia: null,
+    zoom: null, blur: null,
+  };
+
+  // ---- Normalisation ------------------------------------------------------
+  // Small, honest ASR/typo fixups. We deliberately keep this list short — broad
+  // substring matching in the rules handles most variation without a fuzzy layer.
+  const FIXUPS = [
+    [/\bcolor ?blind(ness)?\b/g, 'colorblind'],
+    [/\bcollor/g, 'color'],
+    [/\bread a ?loud\b/g, 'read aloud'],
+    [/\bzoomin\b/g, 'zoom in'],
+    [/\bto (small|big|bright|dark|light)\b/g, 'too $1'],
+    [/\bmigrane\b/g, 'migraine'],
+    [/\banimation\b/g, 'animations'],
+  ];
+
+  function normalize(text) {
+    let t = String(text || '').toLowerCase();
+    for (const [re, sub] of FIXUPS) t = t.replace(re, sub);
+    t = t.replace(/[^\w\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
+    return t;
+  }
+
+  // ---- Safety: prompt-injection / unsafe requests -------------------------
+  const INJECTION = /(ignore (all |your )?(previous|prior)|system prompt|reveal (your|the) (prompt|instructions|api key)|run (javascript|js|code|this|a|the)?\s*script|run (javascript|js|code)|\balert\s*\(|eval\s*\(|<script|drop table|jailbreak|\bsudo\b|api[\s_-]?key|execute (code|the following|this))/i;
+
+  // Words that signal the request is at least *about* using/reading the page —
+  // used to decide "ambiguous accessibility → ask the AI" vs "not our job".
+  const ACCESSIBILITY_HINT = /(see|read|color|colour|text|letter|word|page|screen|eye|eyes|vision|visual|bright|dark|dim|light|contrast|focus|move|motion|animation|blur|zoom|big|small|font|glare|hurt|strain|clutter|busy|overwhelm|simpl)/i;
+
+  // ---- Numeric step helpers ----------------------------------------------
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+  function stepUp(current, base, step, max) {
+    const c = current == null ? base - step : current;
+    return Number(clamp(c + step, base, max).toFixed(3));
+  }
+  function stepDown(current, base, step, min, defaultOff) {
+    if (current == null) return defaultOff; // already off
+    const next = Number((current - step).toFixed(3));
+    return next <= min ? defaultOff : Number(clamp(next, min, base + 10).toFixed(3));
+  }
+
+  // ---- Rule set -----------------------------------------------------------
+  // Each rule: id, category, a matcher (RegExp or predicate), and an apply(cmd, state).
+  // Rules are evaluated in order; multiple can fire (compound commands).
+  const RULES = [
+    // ---- Control (checked first, short-circuits) ----
+    {
+      id: 'reset', category: 'reset',
+      match: /\b(reset|start over|clear (everything|all|it)|turn everything off|remove all|back to (normal|default)|restore the page|undo everything)\b/,
+      control: true,
+      apply: (c) => { c.reset = true; },
+    },
+    {
+      id: 'undo', category: 'reset',
+      match: /\b(undo( that| the last( change)?)?|go back|revert|take that back|never mind that)\b/,
+      control: true,
+      apply: (c) => { c.undo = true; },
+    },
+
+    // ---- Negation / removal. `negation: true` defers it until AFTER the positive
+    // rules so "turn off dark mode" overrides the "dark mode" match. Triggers are
+    // kept tight ("turn off"/"disable") so they don't collide with positive intents
+    // like "stop animations" (reduce motion) or "remove the clutter" (simplify).
+    {
+      id: 'turn-off', category: 'negation', negation: true,
+      match: /\b(turn off|turn .{1,20} off|disable|switch off)\b/,
+      apply: (c, s, t) => { applyNegation(c, t); },
+    },
+
+    // ---- Read aloud ----
+    { id: 'read-stop', category: 'read', match: /\b(stop (reading|talking|the voice|speaking)|be quiet|quiet|shut up|stop reading)\b/, apply: (c) => { c.readAloud = 'stop'; } },
+    // Require an explicit read-aloud signal so "can't read this" does NOT trigger it.
+    { id: 'read-start', category: 'read', match: /\b(read\b.{0,25}\b(aloud|out loud|to me)|read (me )?the (important|main) (part|bit|content)|read aloud|speak the (page|text)|say the words)/, apply: (c) => { c.readAloud = 'start'; } },
+
+    // ---- Simplify page (the centerpiece) ----
+    {
+      id: 'simplify', category: 'simplify',
+      match: /\b(simplif|too (much|busy|cluttered)|too much going on|overwhelm|clutter|declutter|distracting|reader mode|clean( it| this)? up|just (the )?(important|main)|show (me )?only|remove the (ads|clutter|distractions)|focus on the (content|article|text)|easier (for .{1,30} )?to read|easier to (read|focus on)|make .{1,20} readable|hard to read this page)/,
+      apply: (c) => { c.simplify = true; },
+    },
+
+    // ---- Text size ----
+    { id: 'text-smaller', category: 'text', match: /\b(smaller|too big|text is huge|shrink|reduce (the )?(text|font)|zoom out|less zoom)\b/, apply: (c, s) => { c.textScale = stepDown(s && s.textScale, 1.5, 0.25, 1.0, 1.0); } },
+    { id: 'text-bigger', category: 'text', match: /\b(bigger|larger|too small|tiny|can'?t read|hard to read|enlarge|increase (the )?(text|font|size)|make (everything|it|the text|things) bigger|text is small|letters are (tiny|small)|zoom in|magnif|need (it|everything) bigger)/, apply: (c, s) => { c.textScale = stepUp(s && s.textScale, 1.25, 0.25, 2.5); } },
+
+    // ---- Spacing ----
+    { id: 'line-spacing', category: 'spacing', match: /\b(line spacing|space between (the )?lines|lines (are )?too close|lines cramped|spread (out )?the lines( out)?|spread out the lines|double spac|(more|increase|add|extra|the) (the )?spacing|increase (the )?spacing)/, apply: (c, s) => { c.lineSpacing = stepUp(s && s.lineSpacing, 1.8, 0.3, 2.4); } },
+    { id: 'letter-spacing', category: 'spacing', match: /\b(letter spacing|space between (the )?letters|letters (are )?too close|letters cramped)\b/, apply: (c, s) => { c.letterSpacing = stepUp(s && s.letterSpacing, 0.06, 0.03, 0.12); } },
+    { id: 'para-spacing', category: 'spacing', match: /\b(paragraph spacing|space between paragraphs|paragraphs (are )?too close)\b/, apply: (c, s) => { c.paraSpacing = stepUp(s && s.paraSpacing, 1.2, 0.6, 2.5); } },
+    { id: 'bold-text', category: 'text', match: /\b(bold(er)? text|thicker text|make the text bold|letters look thin|text is (too )?thin|heavier text)\b/, apply: (c) => { c.boldText = true; } },
+
+    // ---- Contrast ----
+    { id: 'contrast-less', category: 'contrast', match: /\b(less contrast|too much contrast|contrast is too (high|strong))\b/, apply: (c, s) => { adjustIntensity(c, s, 'highContrast', -0.2, 'highContrast'); } },
+    { id: 'contrast-more', category: 'contrast', match: /\b(high contrast|more contrast|higher contrast|increase (the )?contrast|low contrast|washed out|faded|text is (faint|too light|hard to see)|colou?rs? (are )?(dull|washed))/, apply: (c, s) => { c.highContrast = true; if (s && s.highContrast) adjustIntensity(c, s, 'highContrast', 0.2, 'highContrast'); } },
+
+    // ---- Brightness / dim ("too bright") ----
+    { id: 'dim', category: 'brightness', match: /\b(too bright|page is (too )?bright|screen is (blinding|too bright)|the white hurts|white hurts my eyes|bright white|dim (it|the (page|screen|bright|colou?rs?|lights))|dim the|dimmer|make it dimmer|lower (the )?brightness|less bright|tone down the (glare|brightness|bright)|reduce (the )?glare|it'?s too bright|to bright)/, apply: (c, s) => { c.dimOverlay = true; if (s && s.dimOverlay) adjustIntensity(c, s, 'dimOverlay', 0.15, 'dimOverlay'); } },
+    { id: 'dim-less', category: 'brightness', match: /\b(a little less (bright|dim)|less dim|not so dark|too dim|brighten (it|the page) up)\b/, apply: (c, s) => { adjustIntensity(c, s, 'dimOverlay', -0.15, 'dimOverlay'); } },
+
+    // ---- Dark mode ---- (no trailing \b so "make it darker" matches "make it dark")
+    { id: 'dark-on', category: 'dark', match: /\b(dark mode|make it dark|too white|switch to dark|darken the page|night mode)/, apply: (c) => { c.darkMode = true; } },
+
+    // ---- Warm ----
+    { id: 'warm', category: 'warm', match: /\b(warm(er)?( it up| tone| colou?rs?)?|reduce (the )?blue light|blue light|less blue|yellow tint|easier on (my|the) eyes at night)\b/, apply: (c) => { c.warmTone = true; } },
+
+    // ---- Reduce motion ----
+    { id: 'reduce-motion', category: 'motion', match: /\b(stop (all )?(the )?(animation|animations|movement|moving|motion)|reduce (the )?motion|too much (movement|motion)|things (are )?moving|(page|it) (keeps|is) moving|keeps moving|stop the page from moving|animations? (make me|are) (dizzy|distracting|annoying)|motion sick|makes me dizzy|flashing|blinking)/, apply: (c) => { c.reduceMotion = true; } },
+
+    // ---- Focus / place-keeping ----
+    { id: 'focus', category: 'focus', match: /\b(help me focus|hard to focus|keep losing (my|where) (place|i am)|losing my place|highlight where i am|can'?t keep my place|focus (highlight|assist)|show me where i(')?m reading)\b/, apply: (c) => { c.focusHighlight = true; } },
+
+    // ---- Color distinction (ASSIST — never a simulation here) ----
+    { id: 'color-distinction', category: 'color', match: /\b(can'?t (tell|distinguish|see the difference between)|distinguish (the )?colou?rs?|tell (them |these )?colou?rs? apart|colou?rs? (all )?look (the same|alike)|red (and|from|vs) green|hard to tell (the )?colou?rs?|colou?rblind|colou?r blind|improve colou?r distinction|help (me )?(with|tell) colou?rs?|colou?r distinction)/, apply: (c) => { c.colorDistinction = true; } },
+
+    // ---- Content repositioning ----
+    { id: 'move-right', category: 'reposition', match: /\b(move (the )?(important |main |primary )?(content|text|article|it) (to the )?right|content on (the|my) right|shift (the )?(content|text|it) (to the )?right|trouble seeing the left|keep (the )?controls on (my|the) right|hard to see (the )?left side)/, apply: (c) => { c.reposition = 'right'; } },
+    { id: 'move-left', category: 'reposition', match: /\b(move (the )?(important |main |primary )?(content|text|article|it) (to the )?left|content on (the|my) left|shift (the )?(content|text|it) (to the )?left|trouble seeing the right|hard to see (the )?right side)/, apply: (c) => { c.reposition = 'left'; } },
+    { id: 'move-center', category: 'reposition', match: /\b(center the (content|text|page)|move (it|the content) (back to )?(the )?(middle|center))/, apply: (c) => { c.reposition = 'center'; } },
+
+    // ---- Developer Simulation Mode (explicit only) ----
+    { id: 'sim-deuter', category: 'simulation', match: /\b(simulate|show me|preview) (deuteranopia|red-?green (colou?r ?)?blindness)|deuteranopia simulation\b/, apply: (c) => { c.colorMode = 'deuteranopia'; } },
+    { id: 'sim-protan', category: 'simulation', match: /\b(simulate|show me|preview) protanopia|protanopia simulation\b/, apply: (c) => { c.colorMode = 'protanopia'; } },
+    { id: 'sim-tritan', category: 'simulation', match: /\b(simulate|show me|preview) tritanopia|tritanopia simulation\b/, apply: (c) => { c.colorMode = 'tritanopia'; } },
+    { id: 'sim-achroma', category: 'simulation', match: /\b(simulate|show me|preview) (achromatopsia|grayscale|greyscale|total colou?r blindness)\b/, apply: (c) => { c.colorMode = 'achromatopsia'; } },
+  ];
+
+  // Feature keyword table for negation ("turn off dark mode").
+  const FEATURE_WORDS = [
+    ['simplify', /\b(simplif|reader mode|declutter)\b/],
+    ['darkMode', /\bdark( mode)?\b/],
+    ['dimOverlay', /\b(dim(mer|ming)?|dimming)\b/],
+    ['warmTone', /\bwarm( tone| colou?rs?)?|blue light\b/],
+    ['highContrast', /\bcontrast\b/],
+    ['reduceMotion', /\b(motion|animations?)\b/],
+    ['boldText', /\bbold( text)?\b/],
+    ['focusHighlight', /\bfocus( highlight| assist)?\b/],
+    ['colorDistinction', /\bcolou?r (distinction|help|assist)\b/],
+    ['reposition', /\b(reposition|move|centering)\b/],
+    ['textScale', /\b(text size|bigger text|larger text|zoom|magnif)\b/],
+    ['lineSpacing', /\bline spacing\b/],
+    ['colorMode', /\b(simulation|deuteranopia|protanopia|tritanopia|achromatopsia)\b/],
+    ['readAloud', /\b(reading|read aloud|voice)\b/],
+  ];
+
+  function applyNegation(cmd, t) {
+    for (const [key, re] of FEATURE_WORDS) {
+      if (re.test(t)) {
+        if (key === 'readAloud') cmd.readAloud = 'stop';
+        else cmd[key] = OFF_VALUE[key];
+        return;
+      }
+    }
+    // "turn off the filters" / "stop everything" with no specific feature → reset.
+    cmd.reset = true;
+  }
+
+  function adjustIntensity(cmd, state, key, delta, intensityKey) {
+    const cur = (state && state.intensities && state.intensities[intensityKey]);
+    const base = cur == null ? 0.5 : cur;
+    const next = Number(clamp(base + delta, 0, 1).toFixed(2));
+    cmd.intensities = Object.assign({}, cmd.intensities, { [intensityKey]: next });
+  }
+
+  // Whether an applied command actually changes anything. Defaults are `null`
+  // (untouched); an explicit `false` means "turn this feature off" — a real change.
+  function isEmptyCommand(cmd) {
+    if (cmd.reset || cmd.undo) return false;
+    for (const k of Object.keys(cmd)) {
+      if (k === 'reset' || k === 'undo' || k === 'confidence' || k === 'explanation') continue;
+      const v = cmd[k];
+      if (v !== null && v !== undefined) return false;
+    }
+    return true;
+  }
+
+  // ---- Deterministic explanation -----------------------------------------
+  // Generated from the validated command, never from free-form model text.
+  const LABELS = {
+    simplify: 'Simplified the page',
+    textScale: 'Larger text',
+    lineSpacing: 'More line spacing',
+    letterSpacing: 'More letter spacing',
+    paraSpacing: 'More paragraph spacing',
+    boldText: 'Bolder text',
+    highContrast: 'Higher contrast',
+    darkMode: 'Dark mode',
+    dimOverlay: 'Dimmed the page',
+    warmTone: 'Warmer colors',
+    reduceMotion: 'Stopped animations',
+    focusHighlight: 'Focus highlighting',
+    reposition: 'Moved the content',
+    colorDistinction: 'Color distinction assistance',
+    colorMode: 'Simulation',
+    hemianopia: 'Simulation',
+    zoom: 'Magnified',
+    blur: 'Cataract simulation',
+  };
+
+  function describe(cmd) {
+    if (cmd.reset) return 'Reset the page to normal.';
+    if (cmd.undo) return 'Undid the last change.';
+    if (cmd.readAloud === 'start') return 'Reading the main content aloud.';
+    if (cmd.readAloud === 'stop') return 'Stopped reading.';
+    const on = [];
+    const off = [];
+    for (const key of Object.keys(LABELS)) {
+      const v = cmd[key];
+      if (v === null || v === undefined) continue;
+      // Numeric "off" sentinels: textScale 1.0 (no scaling), spacings 0.
+      const isOff = v === false || v === 0 || (key === 'textScale' && v <= 1.0);
+      if (isOff) off.push(LABELS[key]);
+      else on.push(LABELS[key]);
+    }
+    const parts = [];
+    if (on.length) parts.push(on.join(', '));
+    if (off.length) parts.push('turned off ' + off.join(', '));
+    const s = parts.join('; ');
+    return (s ? s.charAt(0).toUpperCase() + s.slice(1) + '.' : 'No change.').slice(0, 200);
+  }
+
+  // ---- Main entry ---------------------------------------------------------
+  /**
+   * @param {string} transcript raw user text or speech transcript
+   * @param {object} [state] current applied state (for relative commands)
+   * @returns {{command: object|null, source: 'local', confidence: number,
+   *            status: 'ok'|'needs_api'|'unsupported'|'refused'|'empty',
+   *            matched: string[], explanation: string}}
+   */
+  function parse(transcript, state) {
+    const raw = String(transcript == null ? '' : transcript);
+    if (!raw.trim()) {
+      return { command: null, source: 'local', confidence: 1, status: 'empty', matched: [], explanation: 'Please say or type an accessibility request.' };
+    }
+    if (INJECTION.test(raw)) {
+      return { command: null, source: 'local', confidence: 1, status: 'refused', matched: ['safety'], explanation: 'For safety, VoiceVision only performs predefined accessibility adaptations — it cannot run code or follow instructions embedded in requests.' };
+    }
+
+    const t = normalize(raw);
+    const cmd = emptyCommand();
+    const matched = [];
+
+    // Control words short-circuit everything else.
+    for (const rule of RULES) {
+      if (!rule.control) continue;
+      if (rule.match.test(t)) {
+        rule.apply(cmd, state, t);
+        matched.push(rule.id);
+        cmd.confidence = 0.98;
+        cmd.explanation = describe(cmd);
+        return { command: cmd, source: 'local', confidence: 0.98, status: 'ok', matched, explanation: cmd.explanation };
+      }
+    }
+
+    // Positive rules first; defer negation rules so "turn off X" overrides "X".
+    const negations = [];
+    for (const rule of RULES) {
+      if (rule.control) continue;
+      if (rule.match.test(t)) {
+        matched.push(rule.id);
+        if (rule.negation) negations.push(rule);
+        else rule.apply(cmd, state, t);
+      }
+    }
+    for (const rule of negations) rule.apply(cmd, state, t);
+
+    if (matched.length && !isEmptyCommand(cmd)) {
+      // Slightly lower confidence for a lone negation (more ambiguous).
+      cmd.confidence = matched.length === 1 && matched[0] === 'turn-off' ? 0.7 : 0.9;
+      cmd.explanation = describe(cmd);
+      return { command: cmd, source: 'local', confidence: cmd.confidence, status: 'ok', matched, explanation: cmd.explanation };
+    }
+
+    // No confident local match. Decide between asking the AI vs rejecting.
+    if (ACCESSIBILITY_HINT.test(t)) {
+      return { command: null, source: 'local', confidence: 0.3, status: 'needs_api', matched: [], explanation: 'Interpreting your request…' };
+    }
+    return { command: null, source: 'local', confidence: 0.6, status: 'unsupported', matched: [], explanation: "VoiceVision adapts webpages for easier reading and viewing. Try things like “make the text bigger” or “this page is too busy.”" };
+  }
+
+  return { parse, describe, emptyCommand, isEmptyCommand, normalize, OFF_VALUE, _RULES: RULES };
+});
+
+</script>
+<script>/* --- real extension/simplify.js --- */
+/**
+ * VoiceVision — Simplify Page (the centerpiece).
+ *
+ * Deterministic, reversible main-content extraction. No page content ever leaves the
+ * browser. We NEVER delete nodes — we only add a `data-vv-*` attribute, one <style>
+ * element, and a class, so teardown is a clean, complete restore.
+ *
+ * Strategy: find the primary content node (semantic tags first, then a text-vs-link
+ * density score), then hide every sibling *off the path* from <body> to that node.
+ * Links, buttons, and images inside the main content stay fully interactive.
+ *
+ * Exposed as window.__VV_SIMPLIFY so the content-script engine can drive it.
+ */
+(function () {
+  if (window.__VV_SIMPLIFY) return;
+
+  const HIDE_ATTR = 'data-vv-hide';
+  const MAIN_ATTR = 'data-vv-main';
+  const STYLE_ID = 'vv-simplify-style';
+
+  // id/class fragments that signal chrome/clutter rather than article content.
+  const CLUTTER_RE = /(^|[-_ ])(nav|menu|sidebar|side-bar|footer|header|masthead|banner|breadcrumb|comment|promo|sponsor|advert|\bads?\b|widget|social|share|related|recommend|newsletter|subscribe|signup|cookie|consent|gdpr|popup|modal|overlay|toolbar|pagination|tags?|meta)($|[-_ ])/i;
+  // Standalone overlays worth hiding wherever they sit in the tree.
+  const OVERLAY_SEL = '[class*="cookie" i],[id*="cookie" i],[class*="consent" i],[class*="gdpr" i],[class*="newsletter" i],[class*="paywall" i],[aria-modal="true"][role="dialog"]';
+
+  const isOurNode = (el) =>
+    el.id && el.id.indexOf('vv-') === 0 ||
+    el.hasAttribute('data-vv-main') ||
+    /^(SCRIPT|STYLE|LINK|NOSCRIPT|TEMPLATE)$/.test(el.tagName);
+
+  function isVisible(el) {
+    if (!el || !el.getBoundingClientRect) return false;
+    const r = el.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return false;
+    const cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden';
+  }
+
+  function linkDensity(el) {
+    const total = (el.textContent || '').replace(/\s+/g, ' ').trim().length || 1;
+    let linkLen = 0;
+    el.querySelectorAll('a').forEach((a) => { linkLen += (a.textContent || '').trim().length; });
+    return Math.min(1, linkLen / total);
+  }
+
+  // Higher score = more likely to be the real article body.
+  function score(el) {
+    const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (text.length < 200) return -1;
+    let s = text.length * (1 - linkDensity(el));
+    const tag = el.tagName;
+    if (tag === 'ARTICLE' || tag === 'MAIN') s *= 1.6;
+    else if (tag === 'SECTION') s *= 1.2;
+    const idClass = ((el.id || '') + ' ' + (el.className || '')).toString();
+    if (CLUTTER_RE.test(idClass)) s *= 0.25;
+    if (/(article|content|post|story|main|body|entry|prose|markdown|readme)/i.test(idClass)) s *= 1.4;
+    // Prefer denser blocks (more text per descendant element).
+    const nodes = el.getElementsByTagName('*').length || 1;
+    s *= Math.min(1.5, 1 + (text.length / nodes) / 200);
+    return s;
+  }
+
+  function findMain() {
+    // 1) Trust explicit semantics when they hold real text.
+    const semantic = Array.from(document.querySelectorAll('main, [role="main"], article'))
+      .filter((el) => isVisible(el) && (el.textContent || '').trim().length > 200)
+      .sort((a, b) => score(b) - score(a));
+    if (semantic.length) return semantic[0];
+
+    // 2) Otherwise score block containers and take the best.
+    let best = null;
+    let bestScore = 0;
+    const candidates = document.querySelectorAll('body div, body section, body article');
+    for (const el of candidates) {
+      if (isOurNode(el) || !isVisible(el)) continue;
+      const sc = score(el);
+      if (sc > bestScore) { bestScore = sc; best = el; }
+    }
+    return best;
+  }
+
+  function injectStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    const style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = `
+      [${HIDE_ATTR}]{display:none !important;}
+      [${MAIN_ATTR}]{
+        max-width:72ch !important;
+        margin:0 auto !important;
+        float:none !important;
+        position:static !important;
+        width:auto !important;
+        padding:28px 32px !important;
+        font-size:1.15rem !important;
+        line-height:1.7 !important;
+        box-sizing:border-box !important;
+      }
+      [${MAIN_ATTR}] img,[${MAIN_ATTR}] video,[${MAIN_ATTR}] figure{max-width:100% !important;height:auto !important;}
+      [${MAIN_ATTR}] p,[${MAIN_ATTR}] li{margin-block:0.7em !important;}
+      [${MAIN_ATTR}] h1,[${MAIN_ATTR}] h2,[${MAIN_ATTR}] h3{line-height:1.25 !important;margin-block:0.8em 0.4em !important;}
+    `;
+    (document.head || document.documentElement).appendChild(style);
+  }
+
+  /**
+   * Apply simplification. Returns a summary { hidden, ok } or { ok:false }.
+   */
+  function apply() {
+    teardown(); // idempotent — always start clean
+    const main = findMain();
+    if (!main) return { ok: false, hidden: 0 };
+
+    injectStyle();
+    main.setAttribute(MAIN_ATTR, '');
+
+    // Hide every sibling off the path from <body> up to (and around) the main node.
+    let node = main;
+    let hidden = 0;
+    while (node && node.parentElement && node !== document.body && node !== document.documentElement) {
+      const parent = node.parentElement;
+      for (const sib of Array.from(parent.children)) {
+        if (sib === node || isOurNode(sib) || sib.hasAttribute(HIDE_ATTR)) continue;
+        sib.setAttribute(HIDE_ATTR, '');
+        hidden++;
+      }
+      node = parent;
+    }
+
+    // Also hide standalone cookie/consent/newsletter overlays anywhere in the tree.
+    document.querySelectorAll(OVERLAY_SEL).forEach((el) => {
+      if (isOurNode(el) || el.hasAttribute(MAIN_ATTR) || el.contains(main) || main.contains(el)) return;
+      if (!el.hasAttribute(HIDE_ATTR)) { el.setAttribute(HIDE_ATTR, ''); hidden++; }
+    });
+
+    return { ok: true, hidden, main };
+  }
+
+  function teardown() {
+    document.querySelectorAll('[' + HIDE_ATTR + ']').forEach((el) => el.removeAttribute(HIDE_ATTR));
+    document.querySelectorAll('[' + MAIN_ATTR + ']').forEach((el) => el.removeAttribute(MAIN_ATTR));
+    const style = document.getElementById(STYLE_ID);
+    if (style) style.remove();
+  }
+
+  function isActive() {
+    return !!document.querySelector('[' + MAIN_ATTR + ']');
+  }
+
+  // Best-guess main content node WITHOUT hiding anything — used by read-aloud and
+  // repositioning when Simplify is not active.
+  function getContentNode() {
+    return document.querySelector('[' + MAIN_ATTR + ']') || findMain() || document.body;
+  }
+
+  window.__VV_SIMPLIFY = { apply, teardown, isActive, getContentNode, findMain };
+})();
+
+</script>
+<script>/* --- compact preview engine (mirrors content.js, scoped to #vv-content) --- */
+
+(function () {
+  const content = document.getElementById('vv-content');
+  const KEYS = ['textScale','lineSpacing','letterSpacing','paraSpacing','boldText','highContrast','darkMode','dimOverlay','warmTone','reduceMotion','focusHighlight','simplify','reposition','colorDistinction'];
+  const def = () => ({ textScale:null,lineSpacing:null,letterSpacing:null,paraSpacing:null,boldText:false,highContrast:false,darkMode:false,dimOverlay:false,warmTone:false,reduceMotion:false,focusHighlight:false,simplify:false,reposition:null,colorDistinction:false });
+  let state = def(); const undo = [];
+
+  const buildFilter = (s) => { const p=[]; if(s.darkMode)p.push('invert(0.92) hue-rotate(180deg)'); if(s.warmTone)p.push('sepia(0.3)'); if(s.highContrast)p.push('contrast(1.4)'); if(s.colorDistinction)p.push('saturate(1.5) contrast(1.08)'); return p.join(' ')||'none'; };
+  const styleText = (s) => { const r=[]; if(s.lineSpacing)r.push('#vv-content :where(p,li,dd,blockquote,td){line-height:'+s.lineSpacing+'!important}'); if(s.letterSpacing)r.push('#vv-content :where(p,li,a,span,h1,h2,h3){letter-spacing:'+s.letterSpacing+'em!important}'); if(s.paraSpacing)r.push('#vv-content :where(p,li){margin-block:'+s.paraSpacing+'em!important}'); if(s.boldText)r.push('#vv-content :where(p,li,a,span,h1,h2,h3,button){font-weight:600!important}'); if(s.reduceMotion)r.push('#vv-content *,#vv-content *::before,#vv-content *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}'); if(s.focusHighlight)r.push('#vv-content :where(p,li,h1,h2,h3):hover{background:rgba(37,99,235,.14)!important;border-radius:4px}'); if(s.colorDistinction)r.push('#vv-content a{text-decoration:underline!important}#vv-content button{outline:1.5px solid rgba(0,0,0,.45)!important}'); return r.join('\n'); };
+  const setStyle = (id, css) => { let el=document.getElementById(id); if(!css){el&&el.remove();return;} if(!el){el=document.createElement('style');el.id=id;document.head.appendChild(el);} el.textContent=css; };
+  const dim = (on) => { let o=document.getElementById('vv-pg-dim'); if(!on){o&&o.remove();return;} if(!o){o=document.createElement('div');o.id='vv-pg-dim';o.style.cssText='position:fixed;inset:0;background:#000;opacity:.42;pointer-events:none;z-index:40';document.body.appendChild(o);} };
+  const repos = (dir) => { const main=(window.__VV_SIMPLIFY&&window.__VV_SIMPLIFY.getContentNode())||content; content.querySelectorAll('[data-vv-repos]').forEach(e=>e.removeAttribute('data-vv-repos')); if(!dir||dir==='center'){setStyle('vv-pg-repos','');return;} main.setAttribute&&main.setAttribute('data-vv-repos',''); const side=dir==='right'?'margin-left:auto!important;margin-right:2vw!important':'margin-right:auto!important;margin-left:2vw!important'; setStyle('vv-pg-repos','[data-vv-repos]{max-width:60%!important;float:none!important;'+side+'}'); };
+
+  function applyAll() {
+    content.style.filter = buildFilter(state);
+    content.style.zoom = state.textScale && state.textScale>1 ? state.textScale : '';
+    setStyle('vv-pg-style', styleText(state));
+    dim(state.dimOverlay); repos(state.reposition);
+    if (state.simplify) { if(!window.__VV_SIMPLIFY.isActive()) window.__VV_SIMPLIFY.apply(); }
+    else window.__VV_SIMPLIFY.teardown();
+  }
+  function reset() { stopRead(); window.__VV_SIMPLIFY.teardown(); state=def(); undo.length=0; content.style.filter='none'; content.style.zoom=''; setStyle('vv-pg-style',''); setStyle('vv-pg-repos',''); dim(false); content.querySelectorAll('[data-vv-repos]').forEach(e=>e.removeAttribute('data-vv-repos')); render(); }
+  function applyCmd(cmd) { if(!cmd)return; if(cmd.reset){reset();return;} if(cmd.undo){ if(undo.length){state=JSON.parse(undo.pop());applyAll();render();} return;} if(cmd.readAloud){ cmd.readAloud==='start'?startRead():stopRead(); return;} undo.push(JSON.stringify(state)); for(const k of KEYS){const v=cmd[k]; if(v==null)continue; if(k==='reposition'&&v==='center'){state[k]=null;continue;} state[k]=v;} applyAll(); render(); }
+
+  // ---- read aloud ----
+  let reading=false;
+  function startRead(){ if(!('speechSynthesis'in window))return; stopRead(); const root=(window.__VV_SIMPLIFY&&window.__VV_SIMPLIFY.getContentNode())||content; const els=[...root.querySelectorAll('h1,h2,h3,p,li')].filter(e=>!e.closest('[data-vv-hide]')&&e.textContent.trim().length>2); let i=0; reading=true; const next=()=>{ if(!reading||i>=els.length){stopRead();return;} const el=els[i]; document.querySelectorAll('.vv-reading').forEach(x=>x.classList.remove('vv-reading')); el.classList.add('vv-reading'); el.scrollIntoView({block:'center',behavior:'smooth'}); const u=new SpeechSynthesisUtterance(el.textContent.trim()); u.onend=()=>{i++;next();}; u.onerror=()=>{i++;next();}; speechSynthesis.speak(u); }; next(); }
+  function stopRead(){ reading=false; if('speechSynthesis'in window)speechSynthesis.cancel(); document.querySelectorAll('.vv-reading').forEach(x=>x.classList.remove('vv-reading')); }
+
+  // ---- panel wiring ----
+  const $=id=>document.getElementById(id);
+  function active(){ const a=[]; if(state.simplify)a.push('Simplified'); if(state.textScale>1)a.push('Larger text'); if(state.lineSpacing)a.push('More spacing'); if(state.boldText)a.push('Bold'); if(state.highContrast)a.push('High contrast'); if(state.darkMode)a.push('Dark'); if(state.dimOverlay)a.push('Dimmed'); if(state.warmTone)a.push('Warm'); if(state.reduceMotion)a.push('Less motion'); if(state.focusHighlight)a.push('Focus'); if(state.colorDistinction)a.push('Color distinction'); if(state.reposition)a.push('Content '+state.reposition); return a; }
+  function render(){ const a=active(); $('pg-active').textContent = a.length? a.join(' · ') : 'None yet — try a command or a quick action.'; $('pg-undo').disabled = undo.length===0; }
+  function run(text){ const r=window.VVParser.parse(text, state); $('pg-said').textContent = text? '“'+text+'”' : ''; if(r.status==='refused'){$('pg-trace').textContent='🛡️ '+r.explanation; return;} if(r.status==='unsupported'){$('pg-trace').textContent=r.explanation; return;} if(r.status==='empty'){$('pg-trace').textContent='Type a request.'; return;} if(r.status==='needs_api'){$('pg-trace').textContent='“'+text+'” is ambiguous — in the extension this goes to Gemini (structured intent only). Try e.g. “make the text bigger”.'; return;} applyCmd(r.command); $('pg-trace').innerHTML = r.explanation + ' &nbsp;<span class="pg-pill">Local parser · '+Math.round(r.confidence*100)+'% · no page content sent</span>'; }
+
+  document.querySelectorAll('#vv-panel [data-cmd]').forEach(b=>b.addEventListener('click',()=>run(b.getAttribute('data-cmd'))));
+  $('pg-apply').addEventListener('click',()=>{run($('pg-input').value); $('pg-input').value='';});
+  $('pg-input').addEventListener('keydown',e=>{if(e.key==='Enter'){run($('pg-input').value); $('pg-input').value='';}});
+  $('pg-undo').addEventListener('click',()=>applyCmd({undo:true}));
+  $('pg-reset').addEventListener('click',()=>{reset();$('pg-trace').textContent='Page reset to normal.';$('pg-said').textContent='';});
+  render();
+})();
+
+</script>
+</body></html>
