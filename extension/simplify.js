@@ -16,6 +16,7 @@
 
   const HIDE_ATTR = 'data-vv-hide';
   const MAIN_ATTR = 'data-vv-main';
+  const KEEP_ATTR = 'data-vv-keep';
   const STYLE_ID = 'vv-simplify-style';
 
   // id/class fragments that signal chrome/clutter rather than article content.
@@ -85,20 +86,47 @@
     style.id = STYLE_ID;
     style.textContent = `
       [${HIDE_ATTR}]{display:none !important;}
-      [${MAIN_ATTR}]{
-        max-width:72ch !important;
-        margin:0 auto !important;
+      /* Neutralize layout on EVERY ancestor of the main content, so a grid/flex/float
+         parent can't trap the reading column in a narrow track (the sidebars are hidden
+         but their grid tracks otherwise remain). This is what makes the 72ch centering
+         actually take effect. */
+      [${KEEP_ATTR}]{
+        display:block !important;
+        max-width:none !important;
+        width:auto !important;
+        min-width:0 !important;
+        margin:0 !important;
+        padding:0 !important;
         float:none !important;
         position:static !important;
-        width:auto !important;
-        padding:28px 32px !important;
-        font-size:1.15rem !important;
-        line-height:1.7 !important;
-        box-sizing:border-box !important;
+        grid-template-columns:none !important;
+        columns:auto !important;
+        transform:none !important;
+        background:transparent !important;
       }
+      [${MAIN_ATTR}]{
+        display:block !important;
+        max-width:72ch !important;
+        width:auto !important;
+        margin:28px auto !important;
+        padding:32px 40px !important;
+        float:none !important;
+        position:static !important;
+        box-sizing:border-box !important;
+        background:#ffffff !important;
+        color:#1a1a1a !important;
+        font-size:1.18rem !important;
+        line-height:1.75 !important;
+        border-radius:10px !important;
+        box-shadow:0 2px 20px rgba(0,0,0,0.10) !important;
+      }
+      [${MAIN_ATTR}] :where(p,li,dd,dt,blockquote,td,th,figcaption,span){color:#1f2937 !important;}
+      [${MAIN_ATTR}] :where(h1,h2,h3,h4,h5,h6){color:#111827 !important;}
+      [${MAIN_ATTR}] a{color:#1d4ed8 !important;}
       [${MAIN_ATTR}] img,[${MAIN_ATTR}] video,[${MAIN_ATTR}] figure{max-width:100% !important;height:auto !important;}
-      [${MAIN_ATTR}] p,[${MAIN_ATTR}] li{margin-block:0.7em !important;}
-      [${MAIN_ATTR}] h1,[${MAIN_ATTR}] h2,[${MAIN_ATTR}] h3{line-height:1.25 !important;margin-block:0.8em 0.4em !important;}
+      [${MAIN_ATTR}] p,[${MAIN_ATTR}] li{margin-block:0.8em !important;}
+      [${MAIN_ATTR}] h1{font-size:1.9em !important;line-height:1.2 !important;margin:0.2em 0 0.5em !important;}
+      [${MAIN_ATTR}] h2,[${MAIN_ATTR}] h3{line-height:1.25 !important;margin:1.1em 0 0.4em !important;}
     `;
     (document.head || document.documentElement).appendChild(style);
   }
@@ -124,6 +152,8 @@
         sib.setAttribute(HIDE_ATTR, '');
         hidden++;
       }
+      // Mark ancestors so their constraining layout is neutralized (see CSS above).
+      if (parent !== document.body && parent !== document.documentElement) parent.setAttribute(KEEP_ATTR, '');
       node = parent;
     }
 
@@ -139,6 +169,7 @@
   function teardown() {
     document.querySelectorAll('[' + HIDE_ATTR + ']').forEach((el) => el.removeAttribute(HIDE_ATTR));
     document.querySelectorAll('[' + MAIN_ATTR + ']').forEach((el) => el.removeAttribute(MAIN_ATTR));
+    document.querySelectorAll('[' + KEEP_ATTR + ']').forEach((el) => el.removeAttribute(KEEP_ATTR));
     const style = document.getElementById(STYLE_ID);
     if (style) style.remove();
   }

@@ -46,6 +46,8 @@ assert(res.hidden >= 5, `hides multiple clutter blocks (hid ${res.hidden})`);
 
 const mainEl = window.document.querySelector('[data-vv-main]');
 assert(mainEl && !!mainEl.querySelector('h1'), 'main content (with heading) is preserved');
+assert(window.document.querySelectorAll('[data-vv-keep]').length > 0, 'ancestors are marked data-vv-keep (layout neutralized so column is not squeezed)');
+assert(mainEl.parentElement.hasAttribute('data-vv-keep'), 'the immediate parent container is neutralized');
 assert(window.document.getElementById('cookieBanner').hasAttribute('data-vv-hide'), 'cookie banner is hidden');
 assert(window.document.getElementById('newsletterPopup').hasAttribute('data-vv-hide'), 'newsletter popup is hidden');
 assert(window.document.querySelector('header.masthead').hasAttribute('data-vv-hide'), 'masthead/nav is hidden');
@@ -54,6 +56,7 @@ assert(mainEl.querySelectorAll('button.btn').length >= 2 && !mainEl.hasAttribute
 S.teardown();
 assert(window.document.querySelectorAll('[data-vv-main]').length === 0, 'teardown removes main marker');
 assert(window.document.querySelectorAll('[data-vv-hide]').length === 0, 'teardown restores every hidden block');
+assert(window.document.querySelectorAll('[data-vv-keep]').length === 0, 'teardown removes ancestor keep markers');
 
 console.log(failures ? `\nFAILED: ${failures} assertion(s)` : '\nAll simplify assertions passed.');
 process.exit(failures ? 1 : 0);
