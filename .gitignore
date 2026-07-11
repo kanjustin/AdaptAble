@@ -42,3 +42,4 @@ next-env.d.ts
 
 # packaged extension (build artifact)
 comis.zip
+scripts/build-popup-preview.mjs
