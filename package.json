@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node tests/simplify.test.mjs && node evals/run.mjs --assert",
+    "test": "node tests/simplify.test.mjs && node tests/engine.test.mjs && node evals/run.mjs --assert",
     "eval": "node evals/run.mjs",
     "eval:api": "node evals/run.mjs --api",
     "pack:extension": "cd extension && zip -r -FS ../voicevision-extension.zip . -x '.*'"
