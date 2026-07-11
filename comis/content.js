@@ -324,17 +324,10 @@
 
   function applySimplify() {
     if (!window.__VV_SIMPLIFY) return;
-    if (state.simplify) {
-      if (!window.__VV_SIMPLIFY.isActive()) {
-        stopSimplifyObserver();
-        lastSimplify = window.__VV_SIMPLIFY.apply();
-        startSimplifyObserver();
-      }
-    } else {
-      stopSimplifyObserver();
-      window.__VV_SIMPLIFY.teardown();
-      lastSimplify = { hidden: 0, ok: false };
-    }
+    // Simplify = a text-readability pass (no hiding / no re-layout), so it applies to any
+    // dynamically-added content automatically via the <html> class — no observer needed.
+    if (state.simplify) { lastSimplify = window.__VV_SIMPLIFY.apply(); }
+    else { stopSimplifyObserver(); window.__VV_SIMPLIFY.teardown(); lastSimplify = { ok: false }; }
   }
 
   // ---- Read-aloud (Web Speech synthesis) ----------------------------------
@@ -526,7 +519,7 @@
   // Active adaptation labels for the popup (Assist Mode) + a simulation count.
   function activeAdaptations() {
     const a = [];
-    if (state.simplify) a.push({ key: 'simplify', label: 'Simplified page' });
+    if (state.simplify) a.push({ key: 'simplify', label: 'Easier-to-read text' });
     if (state.textScale && state.textScale > 1) a.push({ key: 'textScale', label: `Larger text (${Math.round(state.textScale * 100)}%)` });
     if (state.lineSpacing) a.push({ key: 'lineSpacing', label: 'More line spacing' });
     if (state.letterSpacing) a.push({ key: 'letterSpacing', label: 'More letter spacing' });

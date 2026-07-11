@@ -67,10 +67,11 @@ ok(!!onMessage, 'content.js registered its message listener');
 const s0 = send({ type: 'GET_STATE' });
 ok(s0 && s0.state && s0.adaptations.length === 0, 'GET_STATE returns clean initial state');
 
-// Simplify
-const rSimplify = apply('simplify this page');
-ok(D.querySelector('[data-vv-main]')?.tagName === 'ARTICLE', 'Simplify: <article> chosen as main content');
-ok(D.querySelectorAll('[data-vv-hide]').length >= 5, `Simplify: clutter hidden (${rSimplify.lastSimplify.hidden} blocks)`);
+// Simplify (readability pass — no layout changes)
+apply('simplify this page');
+ok(D.documentElement.classList.contains('vv-simplify-on'), 'Simplify: applies readability class to <html>');
+ok(D.querySelectorAll('[data-vv-hide]').length === 0, 'Simplify: hides nothing (layout unchanged)');
+ok(!!D.getElementById('vv-simplify-style'), 'Simplify: readability stylesheet injected');
 
 // Larger text
 apply('make the text bigger');
@@ -95,8 +96,7 @@ ok(rUndo.canUndo === true, 'Undo: more undo history remains');
 send({ type: 'RESET' });
 ok(D.body.style.filter === 'none' || D.body.style.filter === '', 'Reset: body filter cleared');
 ok(!D.body.style.zoom, 'Reset: body zoom cleared');
-ok(D.querySelectorAll('[data-vv-main]').length === 0, 'Reset: simplify main marker removed');
-ok(D.querySelectorAll('[data-vv-hide]').length === 0, 'Reset: all hidden blocks restored');
+ok(!D.documentElement.classList.contains('vv-simplify-on'), 'Reset: readability (simplify) removed');
 ok(!D.getElementById('vv-reduce-motion-style') && !D.getElementById('vv-assist-style'), 'Reset: injected stylesheets removed');
 const sEnd = send({ type: 'GET_STATE' });
 ok(sEnd.adaptations.length === 0 && !sEnd.canUndo, 'Reset: state back to clean, undo history cleared');

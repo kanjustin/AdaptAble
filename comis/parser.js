@@ -266,7 +266,7 @@
   // ---- Deterministic explanation -----------------------------------------
   // Generated from the validated command, never from free-form model text.
   const LABELS = {
-    simplify: 'Simplified the page',
+    simplify: 'Made the text easier to read',
     textScale: 'Larger text',
     lineSpacing: 'More line spacing',
     letterSpacing: 'More letter spacing',

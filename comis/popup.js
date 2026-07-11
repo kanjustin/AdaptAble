@@ -179,8 +179,8 @@ async function applyCommand(command, meta) {
   lastResponse = resp;
   render(resp);
   let interpreted = meta.interpreted;
-  if (command.simplify && resp.lastSimplify) {
-    interpreted += resp.lastSimplify.ok ? ` (hid ${resp.lastSimplify.hidden} surrounding blocks)` : ' (no obvious main content found)';
+  if (command.simplify) {
+    interpreted = 'Made the text larger, clearer, and better-spaced for easier reading — your page layout is unchanged.';
   }
   if (command.find) {
     const f = resp.lastFind || {};
