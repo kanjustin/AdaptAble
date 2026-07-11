@@ -101,5 +101,15 @@ ok(!D.getElementById('vv-reduce-motion-style') && !D.getElementById('vv-assist-s
 const sEnd = send({ type: 'GET_STATE' });
 ok(sEnd.adaptations.length === 0 && !sEnd.canUndo, 'Reset: state back to clean, undo history cleared');
 
+// Find & guide (local page search)
+const fr = send({ type: 'APPLY_COMMAND', command: P.parse('find add to cart', null).command });
+ok(fr.lastFind && fr.lastFind.ok, 'Find: located a match for "add to cart"');
+ok(!!D.querySelector('[data-vv-find]'), 'Find: highlighted the match on the page');
+ok(fr.lastFind.guided && !!D.getElementById('vv-find-badge'), 'Find: interactive target got a "Click here" guide badge');
+const fr2 = send({ type: 'APPLY_COMMAND', command: P.parse('where are the reviews', null).command });
+ok(fr2.lastFind.ok, 'Find: located "reviews" from a "where are…" query');
+send({ type: 'RESET' });
+ok(!D.querySelector('[data-vv-find]') && !D.getElementById('vv-find-badge'), 'Reset clears find highlights + guide badge');
+
 console.log(failures ? `\nFAILED: ${failures} assertion(s)` : '\nAll engine assertions passed.');
 process.exit(failures ? 1 : 0);

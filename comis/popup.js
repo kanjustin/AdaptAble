@@ -52,6 +52,7 @@ function sanitizeCommand(raw) {
     const v = raw[k];
     if (typeof v === 'number' && isFinite(v)) c[k] = Math.min(hi, Math.max(lo, v));
   }
+  if (typeof raw.find === 'string' && raw.find.trim()) c.find = raw.find.slice(0, 120);
   if (raw.intensities && typeof raw.intensities === 'object') {
     const it = {};
     for (const [k, v] of Object.entries(raw.intensities)) {
@@ -169,6 +170,12 @@ async function applyCommand(command, meta) {
   let interpreted = meta.interpreted;
   if (command.simplify && resp.lastSimplify) {
     interpreted += resp.lastSimplify.ok ? ` (hid ${resp.lastSimplify.hidden} surrounding blocks)` : ' (no obvious main content found)';
+  }
+  if (command.find) {
+    const f = resp.lastFind || {};
+    interpreted = f.ok
+      ? `Found “${f.label || command.find}” — highlighted${f.guided ? ' and pointed to the control to click' : ' and scrolled to it'}.`
+      : `Couldn't find “${command.find}” on this page — try different words.`;
   }
   setStatus('✓ ' + interpreted);
   if (resp.reading) showReadCtl(true);
@@ -295,6 +302,11 @@ document.querySelectorAll('[data-sim]').forEach((btn) => {
   });
 });
 
+$('findBtn').addEventListener('click', () => {
+  textInput.value = 'find ';
+  textInput.focus();
+  setStatus('Type what to find on the page (e.g. “the return policy”), then press Enter.');
+});
 $('readBtn').addEventListener('click', async () => {
   const resp = await sendToActiveTab({ type: 'READ_ALOUD', action: 'start' });
   if (resp) { lastResponse = resp; render(resp); showReadCtl(true); setStatus(resp.reading ? '🔊 Reading the main content aloud…' : 'Nothing readable found on this page.'); }

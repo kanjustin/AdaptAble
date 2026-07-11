@@ -43,6 +43,8 @@
       reposition: null, // 'left' | 'right' | 'center'
       colorDistinction: null, // boolean (assist, NOT a simulation)
       readAloud: null, // 'start' | 'stop'
+      // find & guide — locate content/controls on the page (searched locally)
+      find: null, // string: what to find/highlight/scroll to
       // developer simulation mode (explicit requests only)
       colorMode: null, // 'deuteranopia'|'protanopia'|'tritanopia'|'achromatopsia'
       hemianopia: null, // 'left'|'right'
@@ -142,6 +144,13 @@
     // Require an explicit read-aloud signal so "can't read this" does NOT trigger it.
     { id: 'read-start', category: 'read', match: /\b(read\b.{0,25}\b(aloud|out loud|to me)|read (me )?the (important|main) (part|bit|content)|read aloud|speak the (page|text)|say the words)/, apply: (c) => { c.readAloud = 'start'; } },
 
+    // ---- Find & guide: locate content/controls on the page ----
+    {
+      id: 'find', category: 'find',
+      match: /\b(find( me)?|locate|look for|where(?:'?s| is| are| do i| can i| would i| to)?|show me|take me to|jump to|scroll to|highlight|search for|point me to)\b/,
+      apply: (c, s, t) => { const q = extractFindQuery(t); if (q && q.length >= 2) c.find = q; },
+    },
+
     // ---- Simplify page (the centerpiece) ----
     {
       id: 'simplify', category: 'simplify',
@@ -177,7 +186,7 @@
     { id: 'reduce-motion', category: 'motion', match: /\b(stop (all )?(the )?(animation|animations|movement|moving|motion)|reduce (the )?motion|too much (movement|motion)|things (are )?moving|(page|it) (keeps|is) moving|keeps moving|stop the page from moving|animations? (make me|are) (dizzy|distracting|annoying)|motion sick|makes me dizzy|flashing|blinking)/, apply: (c) => { c.reduceMotion = true; } },
 
     // ---- Focus / place-keeping ----
-    { id: 'focus', category: 'focus', match: /\b(help me focus|hard to focus|keep losing (my|where) (place|i am)|losing my place|highlight where i am|can'?t keep my place|focus (highlight|assist)|show me where i(')?m reading)\b/, apply: (c) => { c.focusHighlight = true; } },
+    { id: 'focus', category: 'focus', match: /\b(help me focus|hard to focus|keep losing (my|where) (place|i am)|losing my place|highlight where i am|can'?t keep my place|focus (highlight|assist)|show me i(')?m reading)\b/, apply: (c) => { c.focusHighlight = true; } },
 
     // ---- Color distinction (ASSIST — never a simulation here) ----
     { id: 'color-distinction', category: 'color', match: /\b(can'?t (tell|distinguish|see the difference between)|distinguish (the )?colou?rs?|tell (them |these )?colou?rs? apart|colou?rs? (all )?look (the same|alike)|red (and|from|vs) green|hard to tell (the )?colou?rs?|colou?rblind|colou?r blind|improve colou?r distinction|help (me )?(with|tell) colou?rs?|colou?r distinction)/, apply: (c) => { c.colorDistinction = true; } },
@@ -222,6 +231,17 @@
     }
     // "turn off the filters" / "stop everything" with no specific feature → reset.
     cmd.reset = true;
+  }
+
+  // Pull the search phrase out of a "find X" / "where is X" style request.
+  function extractFindQuery(t) {
+    const m = t.match(/\b(find me|find|locate|look for|where(?:'?s| is| are| do i| can i| would i| to)?|show me|take me to|jump to|scroll to|highlight|search for|point me to)\b\s*(.*)$/);
+    let q = (m ? m[2] : t) || '';
+    q = q.replace(/^(the|a|an|my|to|for|me|is|are|it|that|about)\s+/i, '')
+         .replace(/\bon (the|this) page\b/gi, '')
+         .replace(/[?.!]+$/, '')
+         .trim();
+    return q;
   }
 
   function adjustIntensity(cmd, state, key, delta, intensityKey) {
@@ -271,6 +291,7 @@
     if (cmd.undo) return 'Undid the last change.';
     if (cmd.readAloud === 'start') return 'Reading the main content aloud.';
     if (cmd.readAloud === 'stop') return 'Stopped reading.';
+    if (cmd.find) return 'Finding “' + cmd.find + '” on the page.';
     const on = [];
     const off = [];
     for (const key of Object.keys(LABELS)) {
@@ -332,6 +353,13 @@
       }
     }
     for (const rule of negations) rule.apply(cmd, state, t);
+
+    // A concrete adaptation matched alongside "find" means the adaptation wins
+    // (e.g. "show me only what matters" is Simplify, not a page search).
+    if (cmd.find) {
+      const hasOther = Object.keys(cmd).some((k) => !['find', 'reset', 'undo', 'confidence', 'explanation', 'intensities'].includes(k) && cmd[k] !== null && cmd[k] !== undefined && cmd[k] !== false);
+      if (hasOther) cmd.find = null;
+    }
 
     if (matched.length && !isEmptyCommand(cmd)) {
       // Slightly lower confidence for a lone negation (more ambiguous).

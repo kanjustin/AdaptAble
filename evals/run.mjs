@@ -40,6 +40,7 @@ function producedSigns(cmd) {
   for (const k of KEYS) { const s = sign(k, cmd[k]); if (s !== undefined) o[k] = s; }
   if (cmd.reset) o.reset = true;
   if (cmd.undo) o.undo = true;
+  if (cmd.find) o.find = 'set';
   return o;
 }
 // Order-independent comparison of two sign maps.

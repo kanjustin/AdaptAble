@@ -109,6 +109,12 @@
     { "text": "this page is overwhelming show me only what matters", "category": "demo", "status": "ok", "keys": { "simplify": true } },
     { "text": "read the main content aloud", "category": "demo", "status": "ok", "keys": { "readAloud": "start" } },
 
+    { "text": "find the return policy", "category": "find", "status": "ok", "keys": { "find": "set" } },
+    { "text": "where do i pay my bill", "category": "find", "status": "ok", "keys": { "find": "set" } },
+    { "text": "highlight the total", "category": "find", "status": "ok", "keys": { "find": "set" } },
+    { "text": "take me to the checkout button", "category": "find", "status": "ok", "keys": { "find": "set" } },
+    { "text": "where are the customer reviews", "category": "find", "status": "ok", "keys": { "find": "set" } },
+
     { "text": "", "category": "empty", "status": "empty" },
     { "text": "   ", "category": "empty", "status": "empty" }
   ]

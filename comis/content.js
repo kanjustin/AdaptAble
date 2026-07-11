@@ -95,6 +95,7 @@
   const undoStack = [];
   const UNDO_LIMIT = 25;
   let lastSimplify = { hidden: 0, ok: false };
+  let lastFind = { ok: false };
   let simplifyObserver = null;
   let simplifyTimer = null;
 
@@ -394,6 +395,91 @@
   function pauseReading() { if (tts.active) { tts.paused = true; window.speechSynthesis.pause(); } }
   function resumeReading() { if (tts.active && tts.paused) { tts.paused = false; window.speechSynthesis.resume(); } }
 
+  // ---- Find & guide (local page search — no page content is ever sent) ----
+  const FIND_STYLE_ID = 'vv-find-style';
+  const FIND_STOP = new Set('the a an my your this that to for of on in at is are be do i you it me we they where what how show find locate look highlight take jump scroll search point can would page here there and or with'.split(' '));
+
+  function ensureFindStyle() {
+    if (document.getElementById(FIND_STYLE_ID)) return;
+    const st = document.createElement('style');
+    st.id = FIND_STYLE_ID;
+    st.textContent = `
+      [data-vv-find]{ box-shadow:0 0 0 3px #fde047, 0 0 0 6px rgba(253,224,71,0.45) !important; border-radius:4px !important; scroll-margin:120px !important; }
+      [data-vv-find="best"]{ box-shadow:0 0 0 3px #fde047, 0 0 0 7px #e8631a !important; }
+      #vv-find-badge{ position:absolute; z-index:2147483647; background:#e8631a; color:#fff;
+        font:700 12px/1.1 ui-monospace, Menlo, monospace; padding:6px 9px; border-radius:7px;
+        box-shadow:0 6px 18px rgba(0,0,0,0.35); pointer-events:none; transform:translateY(-118%); white-space:nowrap; }
+    `;
+    (document.head || document.documentElement).appendChild(st);
+  }
+
+  const isOurFindNode = (el) => (el.id && el.id.indexOf('vv-') === 0) || (el.closest && el.closest('#vv-find-badge'));
+
+  function findVisible(el) {
+    const r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    if (!r || (r.width < 2 && r.height < 2)) return false;
+    const cs = getComputedStyle(el);
+    return cs.display !== 'none' && cs.visibility !== 'hidden';
+  }
+
+  function clearFind() {
+    document.querySelectorAll('[data-vv-find]').forEach((el) => el.removeAttribute('data-vv-find'));
+    const b = document.getElementById('vv-find-badge');
+    if (b) b.remove();
+  }
+
+  function addFindBadge(el) {
+    const badge = document.createElement('div');
+    badge.id = 'vv-find-badge';
+    badge.textContent = '▶ Click here';
+    document.body.appendChild(badge);
+    const r = el.getBoundingClientRect();
+    badge.style.top = (r.top + window.scrollY - 4) + 'px';
+    badge.style.left = (r.left + window.scrollX + 6) + 'px';
+  }
+
+  // Search text, links, buttons and headings for the query; highlight the matches,
+  // scroll to the best one, and (if it's a control) point a "Click here" badge at it.
+  function applyFind(query) {
+    clearFind();
+    const tokens = String(query).toLowerCase().replace(/[^\w\s'-]/g, ' ').split(/\s+/).filter((w) => w.length > 1 && !FIND_STOP.has(w));
+    if (!tokens.length) return { ok: false, query };
+    ensureFindStyle();
+    const phrase = tokens.join(' ');
+    const sel = 'a,button,[role="button"],input[type="submit"],input[type="button"],summary,label,h1,h2,h3,h4,h5,h6,p,li,dt,dd,td,figcaption,[aria-label]';
+    const scored = [];
+    for (const el of document.querySelectorAll(sel)) {
+      if (isOurFindNode(el)) continue;
+      const raw = ((el.getAttribute && el.getAttribute('aria-label')) || '') + ' ' + (el.textContent || '');
+      const t = raw.toLowerCase();
+      if (!t.trim()) continue;
+      let overlap = 0;
+      for (const tok of tokens) if (t.indexOf(tok) > -1) overlap++;
+      if (!overlap) continue;
+      if (!findVisible(el)) continue; // layout check only for text matches (cheap-first)
+      let score = overlap / tokens.length;
+      const tag = el.tagName;
+      const interactive = /^(A|BUTTON|SUMMARY|INPUT)$/.test(tag) || el.getAttribute('role') === 'button';
+      if (interactive) score += 0.6;
+      if (/^H[1-6]$/.test(tag)) score += 0.4;
+      if (t.indexOf(phrase) > -1) score += 0.8;
+      const len = t.trim().length;
+      if (len < 140) score += 0.2; else if (len > 400) score -= 0.5;
+      scored.push({ el, score, interactive, label: (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 60) });
+      if (scored.length > 400) break;
+    }
+    if (!scored.length) return { ok: false, query };
+    scored.sort((a, b) => b.score - a.score);
+    const best = scored[0];
+    let hits = 0;
+    for (const s of scored.slice(0, 8)) { if (s.score >= best.score * 0.6) { s.el.setAttribute('data-vv-find', ''); hits++; } }
+    best.el.setAttribute('data-vv-find', 'best');
+    try { if (best.el.scrollIntoView) best.el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) { /* non-scrollable context */ }
+    let guided = false;
+    if (best.interactive) { addFindBadge(best.el); guided = true; }
+    return { ok: true, query, hits, guided, interactive: best.interactive, label: best.label };
+  }
+
   // ---- Render everything from current state -------------------------------
   function applyAll() {
     applyFilters();
@@ -433,7 +519,8 @@
     applyAssistStyles();
     applyColorLabels(false);
     applyReposition(null);
-    ['vv-read-style'].forEach((id) => { const el = document.getElementById(id); if (el) el.remove(); });
+    clearFind();
+    ['vv-read-style', 'vv-find-style'].forEach((id) => { const el = document.getElementById(id); if (el) el.remove(); });
   }
 
   // Active adaptation labels for the popup (Assist Mode) + a simulation count.
@@ -474,6 +561,7 @@
       adaptations: activeAdaptations(),
       simulations: activeSimulations(),
       lastSimplify,
+      lastFind,
       reading: tts.active,
     };
   }
@@ -537,6 +625,7 @@
         if (cmd.reset) { resetAll(); }
         else if (cmd.undo) { doUndo(); }
         else if (cmd.readAloud) { handleRead(cmd.readAloud); }
+        else if (cmd.find) { lastFind = applyFind(cmd.find); }
         else { pushUndo(); mergeCommand(cmd); applyAll(); }
         persistState();
         sendResponse(response());

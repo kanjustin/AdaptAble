@@ -48,6 +48,7 @@ export const CommandSchema = z
     reposition: z.enum(['left', 'right', 'center']).nullable().optional(),
     colorDistinction: z.boolean().nullable().optional(),
     readAloud: z.enum(['start', 'stop']).nullable().optional(),
+    find: z.string().max(120).nullable().optional(),
     // ---- Developer Simulation Mode (explicit requests only) ----
     colorMode: z.enum(['deuteranopia', 'protanopia', 'tritanopia', 'achromatopsia']).nullable().optional(),
     hemianopia: z.enum(['left', 'right']).nullable().optional(),
@@ -70,7 +71,7 @@ const ACTION_KEYS: (keyof Command)[] = [
   'textScale', 'lineSpacing', 'letterSpacing', 'paraSpacing', 'boldText',
   'highContrast', 'darkMode', 'dimOverlay', 'warmTone', 'reduceMotion', 'brightness',
   'invertColors', 'focusHighlight', 'simplify', 'reposition', 'colorDistinction',
-  'readAloud', 'colorMode', 'hemianopia', 'zoom', 'blur', 'intensities',
+  'readAloud', 'find', 'colorMode', 'hemianopia', 'zoom', 'blur', 'intensities',
 ];
 
 export function isActionable(cmd: Command): boolean {
