@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoiceVision",
-  description: "Voice-activated accessibility layer",
+  title: "VoiceVision Assist",
+  description: "Describe what's hard about a webpage in plain words — VoiceVision safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
 };
 
 export default function RootLayout({

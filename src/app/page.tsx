@@ -5,29 +5,34 @@ import { ActiveModes } from '@/components/ActiveModes';
 import { applyFilters, resetFilters } from '@/lib/filters';
 import { AccessibilityCommand, FilterIntensities, FilterState, defaultFilterState } from '@/types';
 
-const SUPPORTED_ADAPTATIONS = [
+// Assist adaptations — genuine improvements for the person using the page.
+const ASSIST_GROUPS = [
+  { category: 'Assist — Visual Comfort', items: [
+    { label: 'Dark Mode', desc: 'Dark background for comfort', key: 'darkMode', value: true },
+    { label: 'High Contrast', desc: 'Boosts contrast 150%', key: 'highContrast', value: true },
+    { label: 'Warm Tone', desc: 'Reduces blue light', key: 'warmTone', value: true },
+    { label: 'Dim (too bright)', desc: 'Dims the page without inverting', key: 'dimOverlay', value: true },
+    { label: 'Bold Text', desc: 'Thicker, easier-to-read text', key: 'boldText', value: true },
+    { label: 'Reduce Motion', desc: 'Stops animations & autoplay video', key: 'reduceMotion', value: true },
+    { label: 'Magnify', desc: 'Enlarge the whole page', key: 'zoom', value: 'full' },
+    { label: 'Invert Colors', desc: 'Full color inversion', key: 'invertColors', value: true },
+  ]},
+] as const;
+
+// Developer simulations — inspect barriers. NOT assistance for affected users.
+const SIM_GROUPS = [
   { category: 'Color Vision', items: [
     { label: 'Deuteranopia', desc: 'Red-green (most common)', key: 'colorMode', value: 'deuteranopia' },
     { label: 'Protanopia', desc: 'Red weakness', key: 'colorMode', value: 'protanopia' },
     { label: 'Tritanopia', desc: 'Blue-yellow', key: 'colorMode', value: 'tritanopia' },
     { label: 'Achromatopsia', desc: 'Full grayscale', key: 'colorMode', value: 'achromatopsia' },
   ]},
-  { category: 'Vision Conditions', items: [
-    { label: 'Macular Degeneration', desc: 'Central vision loss', key: 'zoom', value: 'center' },
-    { label: 'Tunnel Vision', desc: 'Peripheral vision loss', key: 'zoom', value: 'peripheral' },
-    { label: 'Low Vision', desc: 'Full page magnification', key: 'zoom', value: 'full' },
+  { category: 'Visual Field', items: [
+    { label: 'Central-field loss', desc: 'Darkens the center', key: 'zoom', value: 'center' },
+    { label: 'Peripheral-field loss', desc: 'Darkens the edges', key: 'zoom', value: 'peripheral' },
     { label: 'Cataracts', desc: 'Boosts contrast & brightness', key: 'blur', value: true },
-    { label: 'Hemianopia (Left)', desc: 'Left visual field loss', key: 'hemianopia', value: 'left' },
-    { label: 'Hemianopia (Right)', desc: 'Right visual field loss', key: 'hemianopia', value: 'right' },
-  ]},
-  { category: 'Display Comfort', items: [
-    { label: 'Dark Mode', desc: 'Dark background for comfort', key: 'darkMode', value: true },
-    { label: 'High Contrast', desc: 'Boosts contrast 150%', key: 'highContrast', value: true },
-    { label: 'Warm Tone', desc: 'Reduces blue light', key: 'warmTone', value: true },
-    { label: 'Invert Colors', desc: 'Full color inversion', key: 'invertColors', value: true },
-    { label: 'Light Sensitivity', desc: 'Dims the page without inverting', key: 'dimOverlay', value: true },
-    { label: 'Bold Text', desc: 'Thicker text for astigmatism/presbyopia', key: 'boldText', value: true },
-    { label: 'Reduce Motion', desc: 'Stops animations & autoplay video', key: 'reduceMotion', value: true },
+    { label: 'Hemianopia (Left)', desc: 'Left visual field', key: 'hemianopia', value: 'left' },
+    { label: 'Hemianopia (Right)', desc: 'Right visual field', key: 'hemianopia', value: 'right' },
   ]},
 ] as const;
 
@@ -143,19 +148,20 @@ export default function Home() {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-medium mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-            AI-Powered Accessibility
+            Accessibility assistance
           </div>
           <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-800 bg-clip-text text-transparent">
-            VoiceVision
+            VoiceVision Assist
           </h1>
           <p className="text-gray-500 mt-2 text-lg">
-            Speak your visual needs. AI adapts the screen instantly.
+            Describe what&apos;s hard about a page in your own words. The page adapts to you.
           </p>
-          <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px]">
+          <div className="inline-flex flex-wrap justify-center items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-[11px]">
             <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-            Free tier: 20 voice requests/day — use sidebar buttons for unlimited access
+            This is a developer sandbox. The product is a Chrome extension — try it on the
+            <a href="/demo.html" className="underline font-semibold ml-1">cluttered demo page →</a>
           </div>
         </div>
 
@@ -220,9 +226,9 @@ export default function Home() {
                 <h2 className="text-sm font-semibold text-gray-700">Supported Adaptations</h2>
               </div>
               <p className="text-[11px] text-gray-400 leading-relaxed -mt-2">
-                Just describe how you see — AI figures out what to apply.
+                Describe what&apos;s hard — the AI applies the right assist adaptation.
               </p>
-              {SUPPORTED_ADAPTATIONS.map(group => (
+              {ASSIST_GROUPS.map(group => (
                 <div key={group.category}>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">{group.category}</p>
                   <div className="space-y-0.5">
@@ -233,27 +239,53 @@ export default function Home() {
                           key={item.label}
                           onClick={() => toggleAdaptation(item.key, item.value)}
                           className={`w-full flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg text-left transition-all ${
-                            active
-                              ? 'bg-blue-50 border border-blue-200 shadow-sm'
-                              : 'hover:bg-gray-50 border border-transparent'
+                            active ? 'bg-blue-50 border border-blue-200 shadow-sm' : 'hover:bg-gray-50 border border-transparent'
                           }`}
                         >
                           <span className={`text-xs font-medium ${active ? 'text-blue-700' : 'text-gray-700'}`}>{item.label}</span>
-                          <span className={`text-[10px] shrink-0 ${active ? 'text-blue-500' : 'text-gray-400'}`}>
-                            {active ? 'ON' : item.desc}
-                          </span>
+                          <span className={`text-[10px] shrink-0 ${active ? 'text-blue-500' : 'text-gray-400'}`}>{active ? 'ON' : item.desc}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
               ))}
+
+              <div className="pt-3 border-t border-gray-100">
+                <p className="text-[10px] font-semibold text-purple-500 uppercase tracking-wider mb-1">Developer Simulation (dev tool)</p>
+                <p className="text-[10px] text-gray-400 leading-relaxed mb-2">
+                  Helps developers inspect possible barriers. Not a medical diagnostic or corrective tool, and not assistance for affected users.
+                </p>
+                {SIM_GROUPS.map(group => (
+                  <div key={group.category} className="mb-2">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">{group.category}</p>
+                    <div className="space-y-0.5">
+                      {group.items.map(item => {
+                        const active = isActive(item.key, item.value);
+                        return (
+                          <button
+                            key={item.label}
+                            onClick={() => toggleAdaptation(item.key, item.value)}
+                            className={`w-full flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-lg text-left transition-all ${
+                              active ? 'bg-purple-50 border border-purple-200 shadow-sm' : 'hover:bg-gray-50 border border-transparent'
+                            }`}
+                          >
+                            <span className={`text-xs font-medium ${active ? 'text-purple-700' : 'text-gray-700'}`}>{item.label}</span>
+                            <span className={`text-[10px] shrink-0 ${active ? 'text-purple-500' : 'text-gray-400'}`}>{active ? 'ON' : item.desc}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
               <div className="pt-3 border-t border-gray-100">
                 <p className="text-[10px] text-gray-400 leading-relaxed">
                   <span className="font-medium text-gray-500">Natural language:</span> Say things like
                   &ldquo;everything is too bright&rdquo;,
-                  &ldquo;I can&apos;t tell red from green&rdquo;, or
-                  &ldquo;my peripheral vision is gone&rdquo;
+                  &ldquo;this page is too busy&rdquo;, or
+                  &ldquo;make the text bigger&rdquo;
                 </p>
               </div>
             </div>
