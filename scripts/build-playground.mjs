@@ -66,31 +66,41 @@ const html = `<!DOCTYPE html>
   /* ---- cluttered demo content (this is what gets adapted; styles shared with demo.html) ---- */
   #vv-content{min-height:100vh}
 ${STYLES}
-  /* ---- control panel (NOT transformed; id starts with vv- so Simplify skips it) ---- */
-  #vv-panel{position:fixed;top:16px;right:16px;width:300px;max-height:calc(100vh - 32px);overflow:auto;z-index:2147483000;background:#0f1117;color:#f3f5f9;border-radius:16px;box-shadow:0 12px 50px rgba(0,0,0,.5);padding:16px;font-size:13px}
-  #vv-panel h2{margin:0 0 2px;font-size:16px;font-weight:800}#vv-panel h2 span{color:#4f8cff}
-  #vv-panel .sub{color:#9aa6bd;font-size:11px;margin:0 0 12px}
-  .pg-bar{display:flex;gap:6px}
-  #pg-input{flex:1;min-width:0;background:#1b2130;border:1px solid #313a4f;color:#f3f5f9;border-radius:10px;padding:9px 11px;font-size:13px}
-  #pg-apply{border:none;border-radius:10px;background:#3b82f6;color:#fff;padding:0 14px;font-weight:700;cursor:pointer}
-  .pg-said{margin:8px 0 0;font-size:12px;color:#cfd6e6;min-height:15px}
-  .pg-trace{margin:6px 0 0;font-size:12px;color:#9aa6bd;min-height:16px;line-height:1.5}
-  .pg-pill{display:inline-block;background:#10331f;color:#7ee2a8;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:700}
-  .pg-label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#9aa6bd;font-weight:700;margin:12px 0 6px}
-  .pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .pg-qa{padding:9px 8px;border:1px solid #313a4f;background:#1b2130;color:#f3f5f9;border-radius:9px;cursor:pointer;font-size:12px;font-weight:600;text-align:left}
-  .pg-qa:hover{background:#232b3d;border-color:#3b82f6}
-  .pg-qa.wide{grid-column:1/-1}.pg-qa.primary{background:#3b82f6;border-color:#3b82f6;color:#fff}
-  .pg-active{margin:8px 0 0;font-size:12px;color:#cfd6e6;background:#1b2130;border:1px solid #313a4f;border-radius:9px;padding:8px 10px;min-height:16px}
-  .pg-row{display:flex;gap:6px;margin-top:8px}.pg-row .pg-qa{flex:1;text-align:center}
+  /* ---- control panel — matches the extension popup (terminal / paper theme) ---- */
+  #vv-panel{position:fixed;top:16px;right:16px;width:312px;max-height:calc(100vh - 32px);overflow:auto;z-index:2147483000;
+    font-family:ui-monospace,'SF Mono','Cascadia Code',Menlo,Consolas,monospace;font-size:13px;color:#1b1a17;
+    background-color:#ece9e1;background-image:radial-gradient(rgba(0,0,0,.10) 1px,transparent 1px);background-size:13px 13px;
+    border:2px solid #1b1a17;border-radius:14px;box-shadow:0 18px 55px rgba(0,0,0,.28);padding:14px}
+  #vv-panel .pg-head{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  #vv-panel .mark{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;background:#1b1a17;color:#e8631a;border-radius:4px;font-size:15px;font-weight:700}
+  #vv-panel h2{margin:0;font-size:15px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
+  #vv-panel .sub{color:#6f6a5d;font-size:10.5px;line-height:1.5;margin:0 0 12px}
+  .pg-bar{display:flex;gap:8px}
+  #pg-input{flex:1;min-width:0;background:#f7f5ef;border:1.5px solid #1b1a17;color:#1b1a17;border-radius:6px;padding:9px 11px;font-size:13px;font-family:inherit}
+  #pg-input:focus{outline:2px solid #e8631a;outline-offset:1px}
+  #pg-apply{border:1.5px solid #1b1a17;border-radius:6px;background:#e8631a;color:#1b1a17;padding:0 15px;font-weight:700;cursor:pointer;font-size:12px;letter-spacing:.5px;text-transform:uppercase;font-family:inherit}
+  .pg-said{margin:9px 0 0;font-size:12px;color:#1b1a17;min-height:15px}
+  .pg-trace{margin:6px 0 0;font-size:11.5px;color:#6f6a5d;min-height:16px;line-height:1.55}
+  .pg-pill{display:inline-block;background:#ece9e1;border:1px solid #2e7d32;color:#2e7d32;border-radius:999px;padding:1px 7px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .pg-label{font-size:10px;text-transform:uppercase;letter-spacing:1.4px;color:#6f6a5d;font-weight:700;margin:12px 0 9px;border-bottom:1px solid #cbc6b8;padding-bottom:5px}
+  .pg-label::before{content:'// ';color:#e8631a}
+  .pg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pg-qa{padding:10px 10px;border:1.5px solid #1b1a17;background:#f4f2ec;color:#1b1a17;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;text-align:left;font-family:inherit}
+  .pg-qa:hover{background:#1b1a17;color:#ece9e1}
+  .pg-qa.wide{grid-column:1/-1}
+  .pg-qa.primary{background:#e8631a;border-color:#1b1a17;color:#1b1a17;font-weight:700}
+  .pg-qa.primary:hover{filter:brightness(1.05);background:#e8631a;color:#1b1a17}
+  .pg-active{margin:8px 0 0;font-size:12px;color:#1b1a17;background:#f7f5ef;border:1.5px solid #1b1a17;border-radius:6px;padding:8px 10px;min-height:16px}
+  .pg-row{display:flex;gap:8px;margin-top:8px}.pg-row .pg-qa{flex:1;text-align:center}
   #pg-undo:disabled{opacity:.5;cursor:default}
+  #vv-panel .pg-foot{margin:12px 0 2px;padding-top:9px;border-top:1.5px solid #1b1a17;text-align:center;font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:#6f6a5d}
 </style></head>
 <body>
 <div id="vv-content" class="az-page">${CONTENT}</div>
 
 <div id="vv-panel">
-  <h2>Com<span>is</span></h2>
-  <p class="sub">Browser playground — real parser &amp; Simplify engine from the extension.</p>
+  <div class="pg-head"><span class="mark">✳</span><h2>Comis</h2></div>
+  <p class="sub">Browser playground — the real parser &amp; Simplify engine from the extension.</p>
   <div class="pg-bar">
     <input id="pg-input" type="text" placeholder="Say what's hard… e.g. this is too small"/>
     <button id="pg-apply">Apply</button>
@@ -99,7 +109,7 @@ ${STYLES}
   <p class="pg-trace" id="pg-trace">Try a quick action, or type a request.</p>
   <div class="pg-label">Quick actions</div>
   <div class="pg-grid">
-    <button class="pg-qa primary wide" data-cmd="simplify this page">✨ Simplify this page</button>
+    <button class="pg-qa primary wide" data-cmd="simplify this page">✳ Simplify this page</button>
     <button class="pg-qa" data-cmd="make the text bigger">🔠 Larger text</button>
     <button class="pg-qa" data-cmd="increase the spacing">↕ More spacing</button>
     <button class="pg-qa" data-cmd="high contrast">◐ High contrast</button>
@@ -118,6 +128,7 @@ ${STYLES}
     <button class="pg-qa" id="pg-undo">↩ Undo</button>
     <button class="pg-qa" id="pg-reset">⟲ Reset</button>
   </div>
+  <p class="pg-foot">Works offline · No account · Page content never sent</p>
 </div>
 
 <script>/* --- real comis/parser.js --- */
