@@ -103,11 +103,15 @@
         columns:auto !important;
         transform:none !important;
         background:transparent !important;
+        flex:1 1 100% !important;
+        grid-column:1 / -1 !important;
       }
       [${MAIN_ATTR}]{
         display:block !important;
         max-width:72ch !important;
         width:auto !important;
+        flex:1 1 100% !important;
+        grid-column:1 / -1 !important;
         margin:28px auto !important;
         padding:32px 40px !important;
         float:none !important;
@@ -120,6 +124,9 @@
         border-radius:10px !important;
         box-shadow:0 2px 20px rgba(0,0,0,0.10) !important;
       }
+      /* Linearize any multi-column layout INSIDE the chosen content, so a title/text
+         column can't be squeezed into a narrow strip on complex pages (e.g. product pages). */
+      [${MAIN_ATTR}] :where(div,section,ul,ol,form,article,aside){display:block !important;float:none !important;width:auto !important;max-width:100% !important;}
       [${MAIN_ATTR}] :where(p,li,dd,dt,blockquote,td,th,figcaption,span){color:#1f2937 !important;}
       [${MAIN_ATTR}] :where(h1,h2,h3,h4,h5,h6){color:#111827 !important;}
       [${MAIN_ATTR}] a{color:#1d4ed8 !important;}
