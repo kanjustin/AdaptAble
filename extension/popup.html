@@ -1,115 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <style>
+  :root {
+    --bg: #0f1117; --panel: #1b2130; --panel2: #232b3d; --line: #313a4f;
+    --text: #f3f5f9; --muted: #9aa6bd; --accent: #4f8cff; --accent2: #3b82f6;
+    --danger: #ef4444; --ok: #22c55e; --warn: #f59e0b;
+  }
+  * { box-sizing: border-box; }
   body {
-    width: 320px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    padding: 16px;
-    background: #0f0f0f;
-    color: #f0f0f0;
+    width: 372px; margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 14px;
   }
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  h1 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 700;
-  }
-  h1 span { color: #60a5fa; }
-  button#openSiteBtn {
-    border: none;
-    border-radius: 8px;
-    background: #1f2937;
-    color: #9ca3af;
-    width: 28px;
-    height: 28px;
-    font-size: 14px;
-    cursor: pointer;
-    line-height: 1;
-  }
-  button#openSiteBtn:hover { background: #374151; color: #f0f0f0; }
-  button#micBtn {
-    width: 100%;
-    padding: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    border: none;
-    border-radius: 10px;
-    background: #3b82f6;
-    color: #fff;
-    cursor: pointer;
-  }
-  button#micBtn:disabled { opacity: 0.6; cursor: default; }
-  button#micBtn.listening { background: #ef4444; animation: pulse 1s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-  #transcript {
-    margin: 12px 0 0;
-    font-size: 13px;
-    color: #d1d5db;
-    min-height: 18px;
-  }
-  #explanation {
-    margin: 6px 0 0;
-    font-size: 12px;
-    color: #9ca3af;
-    min-height: 16px;
-  }
-  .filters { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-  .filter-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #1f2937;
-    border-radius: 10px;
-    padding: 8px 10px;
-  }
-  .filter-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #f0f0f0;
-    flex: 0 0 auto;
-    white-space: nowrap;
-  }
-  .filter-slider {
-    flex: 1 1 auto;
-    min-width: 0;
-    accent-color: #3b82f6;
-    height: 4px;
-    cursor: pointer;
-  }
-  .filter-remove {
-    flex: 0 0 auto;
-    width: 20px;
-    height: 20px;
-    border: none;
-    border-radius: 999px;
-    background: #374151;
-    color: #d1d5db;
-    font-size: 12px;
-    line-height: 1;
-    cursor: pointer;
-  }
-  .filter-remove:hover { background: #ef4444; color: #fff; }
-  .empty { color: #6b7280; font-size: 12px; }
-  .hint { margin-top: 14px; font-size: 11px; color: #6b7280; line-height: 1.5; }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 8px; }
+  h1 { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.2px; }
+  h1 span { color: var(--accent); }
+  .iconbtn { border: none; background: var(--panel2); color: var(--muted); width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+  .iconbtn:hover { background: var(--line); color: var(--text); }
+  .tabs { display: flex; gap: 6px; padding: 0 16px 10px; }
+  .tab { flex: 1; padding: 9px; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 9px; cursor: pointer; font-weight: 700; font-size: 13px; }
+  .tab[aria-selected="true"] { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+  .banner { margin: 0 16px 10px; padding: 9px 11px; border-radius: 9px; font-size: 12px; line-height: 1.45; }
+  .banner.offline { background: #3a2a12; color: #fcd9a2; border: 1px solid #6b4a1e; }
+  .banner.sim { background: #2a2140; color: #d7c6ff; border: 1px solid #4a3a76; }
+  .section { padding: 0 16px 12px; }
+  .cmdbar { display: flex; gap: 8px; align-items: stretch; }
+  #micBtn { flex: 0 0 auto; width: 52px; border: none; border-radius: 12px; background: var(--accent2); color: #fff; font-size: 20px; cursor: pointer; }
+  #micBtn.listening { background: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  #textInput { flex: 1 1 auto; min-width: 0; background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  #textInput::placeholder { color: var(--muted); }
+  #sendBtn { flex: 0 0 auto; border: none; border-radius: 12px; background: var(--panel2); color: var(--text); padding: 0 14px; cursor: pointer; font-weight: 700; }
+  #sendBtn:hover { background: var(--line); }
+  #status { margin: 10px 0 0; font-size: 12px; color: var(--muted); min-height: 16px; }
+  #transcript { margin: 8px 0 0; font-size: 13px; color: var(--text); min-height: 16px; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin: 4px 0 8px; font-weight: 700; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .qa { padding: 11px 10px; border: 1px solid var(--line); background: var(--panel); color: var(--text); border-radius: 11px; cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; }
+  .qa:hover { background: var(--panel2); border-color: var(--accent2); }
+  .qa.wide { grid-column: 1 / -1; }
+  .qa.primary { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .qa.primary:hover { background: var(--accent); }
+  .chips { display: flex; flex-direction: column; gap: 7px; }
+  .chip { display: flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .chip .name { font-weight: 600; font-size: 12.5px; flex: 0 0 auto; }
+  .chip input[type=range] { flex: 1 1 auto; min-width: 0; accent-color: var(--accent); height: 4px; }
+  .chip .x { margin-left: auto; flex: 0 0 auto; width: 22px; height: 22px; border: none; border-radius: 999px; background: var(--panel2); color: var(--muted); cursor: pointer; font-size: 13px; }
+  .chip .x:hover { background: var(--danger); color: #fff; }
+  .empty { color: var(--muted); font-size: 12px; }
+  .row { display: flex; gap: 8px; }
+  .row .qa { flex: 1; text-align: center; }
+  .readctl { display: none; gap: 8px; margin-top: 8px; }
+  .readctl.show { display: flex; }
+  details { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); margin-top: 10px; }
+  summary { padding: 9px 12px; cursor: pointer; font-weight: 700; font-size: 12.5px; color: var(--text); list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: '▸ '; color: var(--muted); }
+  details[open] summary::before { content: '▾ '; }
+  .trace { padding: 0 12px 12px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+  .trace b { color: var(--text); }
+  .trace .kv { display: flex; justify-content: space-between; gap: 8px; }
+  .pill { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .pill.local { background: #10331f; color: #7ee2a8; }
+  .pill.gemini { background: #10233f; color: #8fbaff; }
+  .pill.no { background: #10331f; color: #7ee2a8; }
+  .privacy { padding: 0 16px 14px; display: none; }
+  .privacy.show { display: block; }
+  .plist { font-size: 12px; line-height: 1.55; color: var(--muted); margin: 6px 0 0; padding-left: 16px; }
+  .plist.no li { color: #f0a9a9; }
+  .plist.yes li { color: #8fbaff; }
+  .plist.local li { color: #7ee2a8; }
+  .hint { padding: 0 16px 14px; font-size: 11px; color: var(--muted); line-height: 1.5; }
+  hr { border: none; border-top: 1px solid var(--line); margin: 12px 16px; }
 </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Voice<span>Vision</span></h1>
-    <button id="openSiteBtn" title="Open VoiceVision website">↗</button>
+  <header>
+    <h1>Voice<span>Vision</span> Assist</h1>
+    <button id="privacyBtn" class="iconbtn" title="Privacy & data">🛡️</button>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tabAssist" role="tab" aria-selected="true">Assist</button>
+    <button class="tab" id="tabSim" role="tab" aria-selected="false">Simulation (dev)</button>
   </div>
-  <button id="micBtn">🎤 Hold to Speak</button>
-  <p id="transcript"></p>
-  <p id="explanation"></p>
-  <div id="filters" class="filters"><span class="empty">No filters active</span></div>
-  <p class="hint">Try: "I have red-green colorblindness", "make it dark", "I'm light sensitive", "reset to normal"</p>
+
+  <div id="offlineBanner" class="banner offline" style="display:none">
+    You're offline. Common accessibility commands still work locally — only unusual phrasing needs the AI.
+  </div>
+
+  <!-- ================= PRIVACY PANEL ================= -->
+  <div id="privacyPanel" class="privacy">
+    <div class="label">Processed locally — never leaves your browser</div>
+    <ul class="plist local">
+      <li>Webpage structure &amp; content simplification</li>
+      <li>All visual transformations</li>
+      <li>Read-aloud text extraction</li>
+      <li>Your saved preferences</li>
+    </ul>
+    <div class="label" style="margin-top:12px">Sent to the AI only when a command is unusual</div>
+    <ul class="plist yes">
+      <li>Your typed/spoken command</li>
+      <li>Which adaptations are currently on</li>
+    </ul>
+    <div class="label" style="margin-top:12px">Never sent anywhere</div>
+    <ul class="plist no">
+      <li>Page text, passwords, or form fields</li>
+      <li>Browsing history or cookies</li>
+      <li>Screenshots or full page contents</li>
+    </ul>
+    <hr />
+    <p class="hint" style="padding:0">Common commands are interpreted by an on-device parser (no network). The AI is only asked to interpret wording the parser doesn't recognize, and it only returns a structured intent — it can't run code or read the page.</p>
+  </div>
+
+  <!-- ================= ASSIST VIEW ================= -->
+  <div id="assistView">
+    <div class="section">
+      <div class="cmdbar">
+        <button id="micBtn" title="Hold to speak">🎤</button>
+        <input id="textInput" type="text" placeholder="Say what's hard… e.g. “this is too small”" aria-label="Describe what is hard about this page" />
+        <button id="sendBtn">Apply</button>
+      </div>
+      <p id="transcript"></p>
+      <p id="status"></p>
+      <div id="readCtl" class="readctl">
+        <button class="qa" id="readPause">⏸ Pause</button>
+        <button class="qa" id="readResume">▶ Resume</button>
+        <button class="qa" id="readStop">⏹ Stop</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">Quick actions</div>
+      <div class="grid">
+        <button class="qa primary wide" data-cmd="simplify this page">✨ Simplify this page</button>
+        <button class="qa" data-cmd="bigger text">🔠 Larger text</button>
+        <button class="qa" data-cmd="more line spacing">↕ More spacing</button>
+        <button class="qa" data-cmd="high contrast">◐ High contrast</button>
+        <button class="qa" data-cmd="dark mode">🌙 Dark mode</button>
+        <button class="qa" data-cmd="the page is too bright">🔅 Dim it</button>
+        <button class="qa" data-cmd="warm colors">🔥 Warm colors</button>
+        <button class="qa" data-cmd="stop animations">🚫 Less motion</button>
+        <button class="qa" data-cmd="help me focus">🎯 Focus highlight</button>
+        <button class="qa" data-cmd="improve color distinction">🎨 Color distinction</button>
+        <button class="qa" data-cmd="move the content to the right">➡ Move right</button>
+        <button class="qa" id="readBtn">🔊 Read aloud</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">Active adaptations</div>
+      <div id="adaptations" class="chips"><span class="empty">None yet — try a quick action above.</span></div>
+      <div class="row" style="margin-top:10px">
+        <button class="qa" id="undoBtn">↩ Undo</button>
+        <button class="qa" id="resetBtn">⟲ Reset page</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <details id="traceBox">
+        <summary>What just happened?</summary>
+        <div class="trace" id="trace">
+          <div>Run a command to see how it was interpreted.</div>
+        </div>
+      </details>
+      <details id="debugBox">
+        <summary>Debug metrics</summary>
+        <div class="trace" id="debug">
+          <div class="kv"><span>Local parse</span><b id="mLocal">—</b></div>
+          <div class="kv"><span>AI interpret</span><b id="mApi">—</b></div>
+          <div class="kv"><span>DOM apply</span><b id="mDom">—</b></div>
+          <div class="kv"><span>Total</span><b id="mTotal">—</b></div>
+          <div class="kv"><span>Source</span><b id="mSource">—</b></div>
+        </div>
+      </details>
+    </div>
+    <p class="hint">Try: “this page is overwhelming and the text is too small”, “stop the movement”, “I can’t tell these colors apart”, “read the important part”, “undo”.</p>
+  </div>
+
+  <!-- ================= SIMULATION VIEW ================= -->
+  <div id="simView" style="display:none">
+    <div class="banner sim">
+      <b>Developer Simulation Mode.</b> These previews help developers inspect possible accessibility barriers. This is <b>not</b> a medical diagnostic or corrective tool, and it does not help people who have these conditions.
+    </div>
+    <div class="section">
+      <div class="label">Color vision</div>
+      <div class="grid">
+        <button class="qa" data-sim='{"colorMode":"deuteranopia"}'>Deuteranopia</button>
+        <button class="qa" data-sim='{"colorMode":"protanopia"}'>Protanopia</button>
+        <button class="qa" data-sim='{"colorMode":"tritanopia"}'>Tritanopia</button>
+        <button class="qa" data-sim='{"colorMode":"achromatopsia"}'>Achromatopsia</button>
+      </div>
+      <div class="label" style="margin-top:12px">Visual field</div>
+      <div class="grid">
+        <button class="qa" data-sim='{"zoom":"center"}'>Central loss</button>
+        <button class="qa" data-sim='{"zoom":"peripheral"}'>Peripheral loss</button>
+        <button class="qa" data-sim='{"hemianopia":"left"}'>Hemianopia L</button>
+        <button class="qa" data-sim='{"hemianopia":"right"}'>Hemianopia R</button>
+        <button class="qa" data-sim='{"blur":true}'>Cataracts</button>
+        <button class="qa" data-sim='{"zoom":"full"}'>Magnify</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="label">Active simulations</div>
+      <div id="simulations" class="chips"><span class="empty">None active.</span></div>
+      <div class="row" style="margin-top:10px">
+        <button class="qa" id="resetBtn2">⟲ Reset page</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="parser.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

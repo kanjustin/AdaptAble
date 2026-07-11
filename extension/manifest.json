@@ -1,17 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "VoiceVision",
-  "version": "1.2.0",
-  "description": "Voice-activated screen accessibility. Speak your needs — the page adapts in real time.",
+  "name": "VoiceVision Assist",
+  "version": "2.0.0",
+  "description": "Describe what's hard about a webpage in plain words — VoiceVision safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
   "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "VoiceVision — speak to adapt this page"
+    "default_title": "VoiceVision Assist — describe what's hard, the page adapts"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["simplify.js", "content.js"],
       "run_at": "document_idle"
     }
   ]
