@@ -14,37 +14,34 @@ export function VoiceButton({ onCommand, onTranscript, currentState }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const currentStateRef = useRef(currentState);
-  currentStateRef.current = currentState;
+  useEffect(() => { currentStateRef.current = currentState; }, [currentState]);
 
   useEffect(() => {
     if (!transcript) return;
-    onTranscript(transcript);
-    setError('');
-    setLoading(true);
-
-    fetch('/api/interpret', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ transcript, currentState: currentStateRef.current }),
-    })
-      .then(r => {
-        if (!r.ok) return r.json().then(body => { throw { status: r.status, message: body?.error }; });
-        return r.json();
-      })
-      .then(cmd => {
-        if (cmd.error) {
-          setError(cmd.error);
-          setLoading(false);
-          return;
-        }
-        onCommand(cmd);
+    const controller = new AbortController();
+    const run = async () => {
+      onTranscript(transcript);
+      setError('');
+      setLoading(true);
+      try {
+        const res = await fetch('/api/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript, currentState: currentStateRef.current }),
+          signal: controller.signal,
+        });
+        const cmd = await res.json();
+        if (!res.ok || cmd.error) setError(cmd.error || `Error ${res.status}`);
+        else if (cmd.needsClarification) setError(cmd.explanation || 'Please rephrase your request.');
+        else onCommand(cmd);
+      } catch (err: unknown) {
+        if ((err as Error)?.name !== 'AbortError') setError('Connection error — try again');
+      } finally {
         setLoading(false);
-      })
-      .catch((err: unknown) => {
-        const message = err instanceof Error ? err.message : (err as { message?: string })?.message;
-        setError(message || 'Connection error — try again');
-        setLoading(false);
-      });
+      }
+    };
+    run();
+    return () => controller.abort();
   }, [transcript]);
 
   if (!supported) {
