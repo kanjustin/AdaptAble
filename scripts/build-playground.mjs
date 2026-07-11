@@ -62,7 +62,7 @@ const html = `<!DOCTYPE html>
 <title>VoiceVision Assist — Browser Playground</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;font-family:'Amazon Ember',Arial,Helvetica,sans-serif;background:#e3e6e6}
+  body{margin:0;font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif;background:#e3e6e6}
   /* ---- cluttered demo content (this is what gets adapted; styles shared with demo.html) ---- */
   #vv-content{min-height:100vh}
 ${STYLES}

@@ -13,7 +13,7 @@ const html = `<!DOCTYPE html>
 <title>ShopEasy — Blood Pressure Monitor (VoiceVision demo page)</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;font-family:'Amazon Ember',Arial,Helvetica,sans-serif}
+  body{margin:0;font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif}
 ${STYLES}
 </style>
 </head>
