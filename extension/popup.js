@@ -9,7 +9,10 @@
  */
 'use strict';
 
-const API_URL = 'https://voicevision-eight.vercel.app/api/interpret';
+// Default to the deployed API. Override for a local demo without editing code:
+//   chrome.storage.local.set({ vvApiUrl: 'http://localhost:3000/api/interpret' })
+// (run `npm run dev` first). Common commands never hit this — only ambiguous wording.
+let API_URL = 'https://voicevision-eight.vercel.app/api/interpret';
 const API_TIMEOUT_MS = 4500;
 
 const $ = (id) => document.getElementById(id);
@@ -331,7 +334,10 @@ window.addEventListener('offline', refreshOnline);
 // ---- Init ------------------------------------------------------------------
 (async function init() {
   refreshOnline();
-  chrome.storage.local.get('vvMode', (d) => setMode(d && d.vvMode === 'sim' ? 'sim' : 'assist'));
+  chrome.storage.local.get(['vvMode', 'vvApiUrl'], (d) => {
+    setMode(d && d.vvMode === 'sim' ? 'sim' : 'assist');
+    if (d && typeof d.vvApiUrl === 'string' && /^https?:\/\//.test(d.vvApiUrl)) API_URL = d.vvApiUrl;
+  });
   const resp = await sendToActiveTab({ type: 'GET_STATE' });
   if (resp) render(resp);
   else setStatus('Open a normal webpage, then reopen VoiceVision to adapt it.');

@@ -4,7 +4,11 @@ A reliable ~2-minute demo that does **not** depend on any external website.
 
 ## Setup (once, before the demo)
 1. `chrome://extensions` → **Developer mode** on → **Load unpacked** → select `extension/`.
-2. Make sure the AI fallback is reachable: the extension points at the deployed API by default, or run `npm run dev` and it works locally for the web app. (Common commands don't need it.)
+2. **AI fallback** (only needed for the "vague wording" step): the deployed API must be running the current code. Two options:
+   - **Redeploy** this branch to Vercel (the old deploy uses a retired Gemini model and will 500), **or**
+   - **Local**: run `npm run dev`, then in the extension's service-worker/popup console run
+     `chrome.storage.local.set({ vvApiUrl: 'http://localhost:3000/api/interpret' })`.
+   - Everything else (the whole core demo) needs **no** AI and no network.
 3. Open the demo page: `http://localhost:3000/demo.html` (after `npm run dev`) or the deployed `/demo.html`.
 
 The demo page is a deliberately hostile "San Ramon Community Services" page: bright background, low-contrast text, a flashing promo + scrolling ticker, dense nav, two sidebars, a cookie banner, a newsletter popup, a red/green status chart, action buttons, and a long article. **The extension is not special-cased for it** — the same engine runs on any site.
