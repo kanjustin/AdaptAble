@@ -302,7 +302,7 @@
       return { command: null, source: 'local', confidence: 1, status: 'empty', matched: [], explanation: 'Please say or type an accessibility request.' };
     }
     if (INJECTION.test(raw)) {
-      return { command: null, source: 'local', confidence: 1, status: 'refused', matched: ['safety'], explanation: 'For safety, VoiceVision only performs predefined accessibility adaptations — it cannot run code or follow instructions embedded in requests.' };
+      return { command: null, source: 'local', confidence: 1, status: 'refused', matched: ['safety'], explanation: 'For safety, Comis only performs predefined accessibility adaptations — it cannot run code or follow instructions embedded in requests.' };
     }
 
     const t = normalize(raw);
@@ -344,7 +344,7 @@
     if (ACCESSIBILITY_HINT.test(t)) {
       return { command: null, source: 'local', confidence: 0.3, status: 'needs_api', matched: [], explanation: 'Interpreting your request…' };
     }
-    return { command: null, source: 'local', confidence: 0.6, status: 'unsupported', matched: [], explanation: "VoiceVision adapts webpages for easier reading and viewing. Try things like “make the text bigger” or “this page is too busy.”" };
+    return { command: null, source: 'local', confidence: 0.6, status: 'unsupported', matched: [], explanation: "Comis adapts webpages for easier reading and viewing. Try things like “make the text bigger” or “this page is too busy.”" };
   }
 
   return { parse, describe, emptyCommand, isEmptyCommand, normalize, OFF_VALUE, _RULES: RULES };

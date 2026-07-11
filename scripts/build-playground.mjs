@@ -89,7 +89,7 @@ ${STYLES}
 <div id="vv-content" class="az-page">${CONTENT}</div>
 
 <div id="vv-panel">
-  <h2>Voice<span>Vision</span> Assist</h2>
+  <h2>Com<span>is</span></h2>
   <p class="sub">Browser playground — real parser &amp; Simplify engine from the extension.</p>
   <div class="pg-bar">
     <input id="pg-input" type="text" placeholder="Say what's hard… e.g. this is too small"/>
