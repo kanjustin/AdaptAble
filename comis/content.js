@@ -1,5 +1,5 @@
 /**
- * VoiceVision — content-script engine (the "hands").
+ * Comis — content-script engine (the "hands").
  *
  * Applies ONLY predefined, reversible DOM/CSS transformations. It never runs
  * model-supplied code, selectors, or CSS. Commands arrive already-parsed (locally or

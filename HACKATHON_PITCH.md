@@ -1,7 +1,7 @@
-# VoiceVision — Hackathon Pitch
+# Comis — Hackathon Pitch
 
 ## One-line description
-**VoiceVision is a voice-controlled accessibility layer that lets people describe what is difficult about a webpage and safely restructures the page around their needs.**
+**Comis is a voice-controlled accessibility layer that lets people describe what is difficult about a webpage and safely restructures the page around their needs.**
 
 ## Problem
 People often know that a page is difficult to use but do not know which accessibility setting can help. Browser and OS accessibility tools are scattered and technical — they assume you already speak the jargon.
@@ -42,4 +42,4 @@ A Chrome extension with two clearly separated modes:
 It's a genuinely useful tool for a real local problem — helping neighbors, especially seniors, actually use the websites that run daily life — engineered to a high standard the technical judges can respect: a metric, reliability, explainability, and a privacy/security model.
 
 ## Closing statement
-**VoiceVision lets people describe what is wrong in their own words and makes the web adapt to them — not the other way around.**
+**Comis lets people describe what is wrong in their own words and makes the web adapt to them — not the other way around.**

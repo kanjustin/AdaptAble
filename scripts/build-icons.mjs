@@ -1,6 +1,6 @@
 /**
  * Generates the extension toolbar/store icons from one SVG.
- * A voice "waveform" mark in the VoiceVision blue on the popup's dark navy.
+ * A voice "waveform" mark in the Comis blue on the popup's dark navy.
  * Run: npm run build:icons
  */
 import sharp from 'sharp';
@@ -21,8 +21,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" vi
   <g fill="url(#g)">${bars}</g>
 </svg>`;
 
-fs.mkdirSync('extension/icons', { recursive: true });
+fs.mkdirSync('comis/icons', { recursive: true });
 for (const size of [16, 32, 48, 128]) {
-  await sharp(Buffer.from(svg)).resize(size, size).png().toFile(`extension/icons/icon-${size}.png`);
-  console.log(`wrote extension/icons/icon-${size}.png`);
+  await sharp(Buffer.from(svg)).resize(size, size).png().toFile(`comis/icons/icon-${size}.png`);
+  console.log(`wrote comis/icons/icon-${size}.png`);
 }

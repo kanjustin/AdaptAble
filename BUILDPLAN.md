@@ -1,4 +1,4 @@
-# VoiceVision — 90-Minute Build Plan
+# Comis — 90-Minute Build Plan
 
 Build window: **11:40 AM – 1:10 PM, June 7, 2026**
 
@@ -140,7 +140,7 @@ Final commit: `feat: production deploy verified`
 
 When presenting (1:30–1:45 PM):
 
-1. "Most accessibility tools require navigating menus and knowing technical terms. VoiceVision lets you describe your experience in plain language."
+1. "Most accessibility tools require navigating menus and knowing technical terms. Comis lets you describe your experience in plain language."
 
 2. Live demo: "I have red-green colorblindness" → point out the color swatch panel changing
 

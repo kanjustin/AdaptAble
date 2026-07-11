@@ -3,7 +3,7 @@
 A reliable ~2-minute demo that does **not** depend on any external website.
 
 ## Setup (once, before the demo)
-1. `chrome://extensions` → **Developer mode** on → **Load unpacked** → select `extension/`.
+1. `chrome://extensions` → **Developer mode** on → **Load unpacked** → select `comis/`.
 2. **AI fallback** (only needed for the "vague wording" step): the deployed API must be running the current code. Two options:
    - **Redeploy** this branch to Vercel (the old deploy uses a retired Gemini model and will 500), **or**
    - **Local**: run `npm run dev`, then in the extension's service-worker/popup console run
@@ -16,7 +16,7 @@ The demo page is a deliberately hostile "San Ramon Community Services" page: bri
 ## Script
 
 1. **Open the cluttered demo page.** Let the judges see how busy and low-contrast it is.
-2. Open VoiceVision, and say / type: **“This page is overwhelming and the text is too small.”**
+2. Open Comis, and say / type: **“This page is overwhelming and the text is too small.”**
    → Simplify hides ~8 clutter blocks (nav, sidebars, footer, cookie banner, popup, promo, ticker), keeps the article, and enlarges the text. The status line reads what changed.
 3. Say: **“Move the content to the right and stop all the movement.”**
    → Compound command: the reading column shifts right and animations stop. (Shows compound + reversibility.)

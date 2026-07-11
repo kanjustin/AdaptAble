@@ -1,6 +1,6 @@
 # Architecture
 
-VoiceVision is a **hybrid interpretation system**, not a thin LLM wrapper. The model is only one optional stage, and it can never touch the DOM.
+Comis is a **hybrid interpretation system**, not a thin LLM wrapper. The model is only one optional stage, and it can never touch the DOM.
 
 ```
 ┌─────────────┐   transcript / typed text
@@ -8,7 +8,7 @@ VoiceVision is a **hybrid interpretation system**, not a thin LLM wrapper. The m
 │ brain       │              ▼
 └─────────────┘     ┌───────────────────────┐  confident (status=ok)
       ▲             │ Local parser (UMD)    │────────────────────────────┐
-      │ state/trace │ extension/parser.js   │                            │
+      │ state/trace │ comis/parser.js   │                            │
       │             └───────────┬───────────┘                            │
       │                         │ ambiguous (needs_api)                  │
       │                         ▼                                        ▼
@@ -25,10 +25,10 @@ VoiceVision is a **hybrid interpretation system**, not a thin LLM wrapper. The m
 
 | File | Role |
 |---|---|
-| `extension/parser.js` | **Local deterministic parser** (UMD). Ordered rule set → structured command. Rejects prompt-injection, routes ambiguous wording to the AI, refuses off-topic input. Shared verbatim with the eval harness. |
-| `extension/simplify.js` | **Simplify Page.** Deterministic main-content extraction + reversible declutter. Exposes `window.__VV_SIMPLIFY`. |
-| `extension/content.js` | **Action engine ("hands").** Typed state, undo stack, all predefined DOM/CSS transforms, TTS, MutationObserver for dynamic pages, full teardown. Only applies commands; never interprets. |
-| `extension/popup.{html,js}` | **Control surface ("brain").** Assist/Simulation tabs, local-parser-first pipeline, API call with timeout, client-side command sanitization, transparency trace, privacy panel, debug metrics, offline banner. |
+| `comis/parser.js` | **Local deterministic parser** (UMD). Ordered rule set → structured command. Rejects prompt-injection, routes ambiguous wording to the AI, refuses off-topic input. Shared verbatim with the eval harness. |
+| `comis/simplify.js` | **Simplify Page.** Deterministic main-content extraction + reversible declutter. Exposes `window.__VV_SIMPLIFY`. |
+| `comis/content.js` | **Action engine ("hands").** Typed state, undo stack, all predefined DOM/CSS transforms, TTS, MutationObserver for dynamic pages, full teardown. Only applies commands; never interprets. |
+| `comis/popup.{html,js}` | **Control surface ("brain").** Assist/Simulation tabs, local-parser-first pipeline, API call with timeout, client-side command sanitization, transparency trace, privacy panel, debug metrics, offline banner. |
 | `src/lib/assist/schema.ts` | **Strict Zod command schema** (source of validation truth, server-side). |
 | `src/app/api/interpret/route.ts` | **Gemini fallback.** Assist-first prompt, Zod validation, timeout, rate limit, CORS lock, size caps. |
 | `public/demo.html` | Cluttered demo page (same engine runs here and on real sites). |

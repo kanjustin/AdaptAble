@@ -1,5 +1,5 @@
 /**
- * End-to-end test of the REAL extension engine (extension/content.js + simplify.js),
+ * End-to-end test of the REAL extension engine (comis/content.js + simplify.js),
  * driven through the actual chrome.runtime message protocol with a mock `chrome` API.
  * Proves the popup -> content-script command flow applies and fully reverts DOM changes.
  *
@@ -9,7 +9,7 @@ import { JSDOM } from 'jsdom';
 import fs from 'node:fs';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const P = require('../extension/parser.js');
+const P = require('../comis/parser.js');
 
 let failures = 0;
 const ok = (c, m) => { console.log((c ? '  ✓ ' : '  ✗ ') + m); if (!c) failures++; };
@@ -50,7 +50,7 @@ global.chrome = window.chrome = chrome;
 global.MutationObserver = window.MutationObserver;
 
 // Load the REAL engine files verbatim, in manifest order.
-for (const f of ['./extension/simplify.js', './extension/content.js']) {
+for (const f of ['./comis/simplify.js', './comis/content.js']) {
   const code = fs.readFileSync(f, 'utf8');
   new Function('window', 'document', 'getComputedStyle', 'chrome', 'MutationObserver', code)(window, window.document, window.getComputedStyle, chrome, window.MutationObserver);
 }

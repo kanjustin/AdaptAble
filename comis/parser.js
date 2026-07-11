@@ -1,5 +1,5 @@
 /**
- * VoiceVision — Local deterministic command parser (Assist Mode).
+ * Comis — Local deterministic command parser (Assist Mode).
  *
  * This is the PRIMARY interpretation path. It runs instantly, offline, with zero
  * network calls, and covers the common accessibility commands. Only when it is not

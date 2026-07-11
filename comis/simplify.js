@@ -1,5 +1,5 @@
 /**
- * VoiceVision — Simplify Page (the centerpiece).
+ * Comis — Simplify Page (the centerpiece).
  *
  * Deterministic, reversible main-content extraction. No page content ever leaves the
  * browser. We NEVER delete nodes — we only add a `data-vv-*` attribute, one <style>

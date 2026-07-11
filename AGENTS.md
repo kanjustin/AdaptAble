@@ -1,4 +1,4 @@
-# VoiceVision — Agent Instructions
+# Comis — Agent Instructions
 
 Read this file first. Works with Cursor, Windsurf, GitHub Copilot, Claude Code, and all other AI coding assistants.
 
@@ -300,7 +300,7 @@ Without visible content, filter effects aren't obvious to judges. Render this on
 
 Paste this when switching tools:
 ```
-Continuing VoiceVision — voice-activated accessibility app.
+Continuing Comis — voice-activated accessibility app.
 Read AGENTS.md and CLAUDE.md in project root for full context.
 Stack: Next.js + @google/genai (gemini-2.5-flash) + Web Speech API + SVG CSS filters.
 Current status: [what's working]

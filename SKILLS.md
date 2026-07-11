@@ -1,4 +1,4 @@
-# VoiceVision — Skills Reference
+# Comis — Skills Reference
 
 Reusable, self-contained implementations for AI coding tools to reference.
 Each skill is a complete, copy-pasteable pattern. Do not modify internals unless explicitly needed.

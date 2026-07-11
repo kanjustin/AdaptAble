@@ -1,6 +1,6 @@
-# VoiceVision Assist
+# Comis
 
-**A voice-controlled accessibility layer for the web.** Describe what's hard about a webpage in your own words — *"this is too small,"* *"the page is too busy,"* *"the white hurts my eyes"* — and VoiceVision safely restructures the page around your needs. No settings menus, no jargon, no contrast ratios.
+**A voice-controlled accessibility layer for the web.** Describe what's hard about a webpage in your own words — *"this is too small,"* *"the page is too busy,"* *"the white hurts my eyes"* — and Comis safely restructures the page around your needs. No settings menus, no jargon, no contrast ratios.
 
 Built for **The Vakathon** (San Ramon, CA — July 11, 2026). Theme: *code that makes a real, useful impact in the community.*
 
@@ -59,10 +59,10 @@ See [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY.md](SECURITY.md), [PRIVACY.md]
 
 ## Install & run the extension (Chrome / Edge)
 
-1. `git clone https://github.com/TarunYadgirkar/voicevision.git`
+1. `git clone https://github.com/kanjustin/AdaptAble.git`
 2. Open `chrome://extensions`, enable **Developer mode** (top-right).
-3. Click **Load unpacked** and select the **`extension/`** folder.
-4. Open any normal website and click the VoiceVision toolbar icon.
+3. Click **Load unpacked** and select the **`comis/`** folder.
+4. Open any normal website and click the Comis toolbar icon.
 5. Type or speak a request (e.g. *"simplify this page and make the text bigger"*).
 
 The extension calls a small hosted API only for ambiguous phrasing; everything else runs locally.
@@ -89,7 +89,7 @@ npm run lint           # eslint (0 errors)
 npm test               # simplify regression test + parser eval (asserts thresholds)
 npm run eval           # parser evaluation report (local)
 npm run eval:api       # also exercise the live Gemini fallback
-npm run pack:extension # zip the extension/ folder for distribution
+npm run pack:comis # zip the comis/ folder for distribution
 ```
 
 ## Evaluation (real, measured — not fabricated)
@@ -115,7 +115,7 @@ The 15 core commands run with no network. If the AI is unreachable, an `AbortCon
 - Some strict-CSP or heavily-scripted SPAs limit content scripts or re-render faster than Simplify re-applies.
 - Web Speech **recognition** is Chrome/Edge + HTTPS only; typed input always works. Read-aloud uses `speechSynthesis` where available.
 - Simplify heuristics can mis-pick the main content on unusual layouts — **Undo/Reset are always safe**.
-- No medical claims. VoiceVision does not diagnose or treat any condition.
+- No medical claims. Comis does not diagnose or treat any condition.
 
 See [TESTED_SITES.md](TESTED_SITES.md), [DEMO.md](DEMO.md), and [HACKATHON_PITCH.md](HACKATHON_PITCH.md).
 

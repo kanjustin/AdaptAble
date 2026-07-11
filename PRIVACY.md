@@ -1,6 +1,6 @@
 # Privacy
 
-VoiceVision is built to keep your browsing private. The claims below are the ones the app actually implements — the same list appears in the extension's in-app privacy panel.
+Comis is built to keep your browsing private. The claims below are the ones the app actually implements — the same list appears in the extension's in-app privacy panel.
 
 ## Processed locally — never leaves your browser
 - Webpage structure and content simplification
@@ -32,5 +32,5 @@ Common commands (the 15 core ones) never trigger a network request at all.
 - The API is stateless: it interprets one command and responds. (A best-effort in-memory rate-limit counter keyed by IP exists per server instance and is not persisted.)
 
 ## Your controls
-- **Undo** reverts the last change; **Reset** removes every VoiceVision change and clears injected state.
+- **Undo** reverts the last change; **Reset** removes every Comis change and clears injected state.
 - Uninstalling the extension removes all locally stored preferences.

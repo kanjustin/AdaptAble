@@ -1,6 +1,6 @@
 # Security model
 
-VoiceVision is designed so that **the language model can never cause a harmful action**, and the extension asks for the **minimum** access it needs.
+Comis is designed so that **the language model can never cause a harmful action**, and the extension asks for the **minimum** access it needs.
 
 ## Threat model & mitigations
 

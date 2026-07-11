@@ -31,7 +31,7 @@ global.window = window;
 global.document = window.document;
 global.getComputedStyle = window.getComputedStyle;
 
-const code = fs.readFileSync('./extension/simplify.js', 'utf8');
+const code = fs.readFileSync('./comis/simplify.js', 'utf8');
 new Function('window', 'document', 'getComputedStyle', code)(window, window.document, window.getComputedStyle);
 const S = window.__VV_SIMPLIFY;
 
