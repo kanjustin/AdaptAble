@@ -8,50 +8,10 @@
  * Run: npm run build:playground
  */
 import fs from 'node:fs';
+import { STYLES, CONTENT } from './demo-content.mjs';
 
 const parser = fs.readFileSync('./extension/parser.js', 'utf8');
 const simplify = fs.readFileSync('./extension/simplify.js', 'utf8');
-
-const CONTENT = `
-<header class="pnav">
-  <span class="plogo">San Ramon Services</span>
-  <nav>${['Home','Utilities','Permits','Transit','Health','Library','Parks','Police','Fire','Waste','Taxes','Jobs','Events','Contact','Login'].map(x => `<a href="#">${x}</a>`).join('')}</nav>
-</header>
-<div class="pticker"><span>Breaking: Library hours extended • Water bill due Friday • Flu shots available • Senior shuttle sign-ups open •</span></div>
-<div class="playout">
-  <aside class="pside"><h4>Related</h4><ul>${['Pay water bill','Report an outage','Trash schedule','Senior transport','Flu clinic','Pharmacy refills','Property tax','Jury duty'].map(x => `<li><a href="#">${x}</a></li>`).join('')}</ul></aside>
-  <main>
-    <article>
-      <h1>How to Refill a Prescription and Pay Your Utility Bill Online</h1>
-      <p>This guide explains, step by step, how residents can refill a prescription at the community pharmacy and pay a monthly utility bill without visiting an office in person. These services are available around the clock and are designed to be usable from a phone, tablet, or computer.</p>
-      <div class="pactions"><button class="pbtn">Refill prescription</button><button class="pbtn">Pay utility bill</button><button class="pbtn sec">Schedule shuttle</button></div>
-      <h2>Refilling a prescription</h2>
-      <p>To refill a prescription, you will need the prescription number printed on the side of your medicine bottle. Enter that number, confirm your date of birth, and choose whether you want to pick the medication up or have it delivered. Most refills are ready within four hours.</p>
-      <p>If you take several medications, you can enroll in synchronized refills so that all of your prescriptions are ready on the same day each month. This reduces the number of trips you need to make and makes it easier to keep track of what you have taken.</p>
-      <h2>Paying a utility bill</h2>
-      <p>To pay a utility bill, sign in with your account number and the last name on the account. You can pay a one-time amount, or set up automatic monthly payments. A receipt is emailed to you immediately, and your payment history is stored so you can review past bills at any time.</p>
-      <p>If your bill is higher than usual, you can request a review or apply for the low-income assistance program directly from the same page. Payment plans are available for households that need to spread a large balance over several months.</p>
-      <h2>Current service status</h2>
-      <div class="pchart">
-        <div class="pbar"><span class="psw" style="background:#22c55e"></span> Water portal — operating normally</div>
-        <div class="pbar"><span class="psw" style="background:#ef4444"></span> Prescription delivery — delayed today</div>
-        <div class="pbar"><span class="psw" style="background:#22c55e"></span> Senior shuttle — on schedule</div>
-        <svg width="300" height="90" role="img" aria-label="Weekly uptime">
-          <rect x="20" y="15" width="34" height="60" fill="#22c55e"></rect>
-          <rect x="70" y="40" width="34" height="35" fill="#ef4444"></rect>
-          <rect x="120" y="22" width="34" height="53" fill="#22c55e"></rect>
-          <rect x="170" y="46" width="34" height="29" fill="#ef4444"></rect>
-          <rect x="220" y="26" width="34" height="49" fill="#22c55e"></rect>
-        </svg>
-        <p style="font-size:11px">Green = up, red = down. (Color is the only cue here — a barrier for many users.)</p>
-      </div>
-    </article>
-  </main>
-  <aside class="pside"><h4>Sponsored</h4><p class="ppromo">Get 20% off home solar — click now!</p><h4>Weather</h4><p>Sunny, 78°F.</p><h4>Follow us</h4><ul>${['Facebook','Twitter / X','Instagram','Nextdoor'].map(x => `<li><a href="#">${x}</a></li>`).join('')}</ul></aside>
-</div>
-<div class="pcookie" id="pcookie">🍪 We use cookies to improve your experience.<button class="pbtn" onclick="this.parentElement.remove()">Accept</button></div>
-<div class="ppopup" id="ppopup" role="dialog" aria-modal="true" aria-label="Newsletter"><div class="pbox"><button class="pclose" onclick="document.getElementById('ppopup').remove()">×</button><h3>📬 Don't miss out!</h3><p>Subscribe to the weekly newsletter.</p><button class="pbtn" style="width:100%" onclick="document.getElementById('ppopup').remove()">Subscribe</button></div></div>
-`;
 
 const ENGINE = String.raw`
 (function () {
@@ -102,34 +62,10 @@ const html = `<!DOCTYPE html>
 <title>VoiceVision Assist — Browser Playground</title>
 <style>
   *{box-sizing:border-box}
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef1f6}
-  /* ---- cluttered demo content (this is what gets adapted) ---- */
-  #vv-content{background:#fffdf5;color:#9a9a90;font-size:13px;line-height:1.35;min-height:100vh;padding-bottom:120px}
-  #vv-content a{color:#a0a4b8}
-  .pnav{background:#fef9e7;border-bottom:1px solid #f0e9cf;padding:8px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .plogo{font-weight:800;color:#c9a227;font-size:16px}
-  .pnav nav{display:flex;flex-wrap:wrap;gap:8px;font-size:12px}.pnav nav a{text-decoration:none}
-  .pticker{overflow:hidden;white-space:nowrap;background:#fff3cd;border-bottom:1px solid #f0e9cf}
-  .pticker span{display:inline-block;padding:4px 0;animation:scroll 12s linear infinite}
-  @keyframes scroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
-  .playout{display:grid;grid-template-columns:170px 1fr 190px;gap:12px;padding:12px}
-  .pside{background:#fef9e7;border:1px solid #f3ecd2;border-radius:6px;padding:10px;font-size:12px}
-  .pside h4{margin:4px 0 6px;color:#b58e1f}.pside ul{margin:0;padding-left:15px}
-  .ppromo{background:#fff3cd;padding:8px;border-radius:6px}
-  main{background:#fffef9;border:1px solid #f3ecd2;border-radius:6px;padding:16px}
-  article h1{color:#8a7a3a;font-size:21px;margin:0 0 6px}
-  article h2{color:#97853f;font-size:15px;margin:16px 0 6px}article p{margin:10px 0}
-  .pactions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-  .pbtn{background:#2563eb;color:#fff;border:none;border-radius:6px;padding:9px 12px;font-weight:700;cursor:pointer;font-size:12px}
-  .pbtn.sec{background:#e5e7eb;color:#374151}
-  .psw{display:inline-block;width:42px;height:13px;border-radius:3px;vertical-align:middle}
-  .pbar{margin:4px 0;font-size:12px}
-  .pcookie{position:fixed;left:0;right:0;bottom:0;z-index:41;background:#1f2937;color:#e5e7eb;padding:11px 14px;display:flex;gap:12px;align-items:center;font-size:12px}
-  .pcookie .pbtn{margin-left:auto}
-  .ppopup{position:fixed;inset:0;z-index:42;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
-  .ppopup .pbox{position:relative;background:#fff;color:#333;border-radius:10px;padding:20px;width:280px;text-align:center}
-  .pclose{position:absolute;top:8px;right:10px;border:none;background:#eee;border-radius:999px;width:30px;height:30px;font-size:18px;cursor:pointer}
-  .vv-reading{background:#fde68a!important;color:#111!important;box-shadow:0 0 0 4px #fde68a!important;border-radius:3px}
+  body{margin:0;font-family:'Amazon Ember',Arial,Helvetica,sans-serif;background:#e3e6e6}
+  /* ---- cluttered demo content (this is what gets adapted; styles shared with demo.html) ---- */
+  #vv-content{min-height:100vh}
+${STYLES}
   /* ---- control panel (NOT transformed; id starts with vv- so Simplify skips it) ---- */
   #vv-panel{position:fixed;top:16px;right:16px;width:300px;max-height:calc(100vh - 32px);overflow:auto;z-index:2147483000;background:#0f1117;color:#f3f5f9;border-radius:16px;box-shadow:0 12px 50px rgba(0,0,0,.5);padding:16px;font-size:13px}
   #vv-panel h2{margin:0 0 2px;font-size:16px;font-weight:800}#vv-panel h2 span{color:#4f8cff}
@@ -150,7 +86,7 @@ const html = `<!DOCTYPE html>
   #pg-undo:disabled{opacity:.5;cursor:default}
 </style></head>
 <body>
-<div id="vv-content">${CONTENT}</div>
+<div id="vv-content" class="az-page">${CONTENT}</div>
 
 <div id="vv-panel">
   <h2>Voice<span>Vision</span> Assist</h2>

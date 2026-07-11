@@ -48,10 +48,12 @@ const mainEl = window.document.querySelector('[data-vv-main]');
 assert(mainEl && !!mainEl.querySelector('h1'), 'main content (with heading) is preserved');
 assert(window.document.querySelectorAll('[data-vv-keep]').length > 0, 'ancestors are marked data-vv-keep (layout neutralized so column is not squeezed)');
 assert(mainEl.parentElement.hasAttribute('data-vv-keep'), 'the immediate parent container is neutralized');
-assert(window.document.getElementById('cookieBanner').hasAttribute('data-vv-hide'), 'cookie banner is hidden');
-assert(window.document.getElementById('newsletterPopup').hasAttribute('data-vv-hide'), 'newsletter popup is hidden');
-assert(window.document.querySelector('header.masthead').hasAttribute('data-vv-hide'), 'masthead/nav is hidden');
-assert(mainEl.querySelectorAll('button.btn').length >= 2 && !mainEl.hasAttribute('data-vv-hide'), 'action buttons inside main are preserved and interactive');
+assert(window.document.getElementById('az-cookie').hasAttribute('data-vv-hide'), 'cookie banner is hidden');
+assert(window.document.getElementById('az-popup').hasAttribute('data-vv-hide'), 'newsletter popup is hidden');
+assert(window.document.getElementById('az-chat').hasAttribute('data-vv-hide'), 'floating chat widget is hidden');
+assert(window.document.querySelector('header.az-nav').hasAttribute('data-vv-hide'), 'top nav bar is hidden');
+assert(window.document.querySelector('.az-departments').hasAttribute('data-vv-hide'), 'left filter sidebar is hidden');
+assert(mainEl.querySelectorAll('button.az-btn').length >= 2 && !mainEl.hasAttribute('data-vv-hide'), 'buy-box buttons (Add to Cart / Buy Now) are preserved');
 
 S.teardown();
 assert(window.document.querySelectorAll('[data-vv-main]').length === 0, 'teardown removes main marker');

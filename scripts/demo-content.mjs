@@ -1,13 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ShopEasy — Blood Pressure Monitor (VoiceVision demo page)</title>
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:'Amazon Ember',Arial,Helvetica,sans-serif}
+/**
+ * Shared cluttered demo content — a generic "ShopEasy" online-marketplace product page
+ * in the Amazon *style* (not real Amazon branding). Single source of truth for both
+ * public/demo.html (extension target + tests) and public/playground.html (browser preview).
+ *
+ * Deliberately exercises EVERY VoiceVision capability:
+ *  - Simplify: dense nav, left filter sidebar, right sponsored/related sidebar, footer,
+ *    cookie banner, newsletter popup, floating chat widget, animated promo ticker — all
+ *    removed; the <article> product detail (with its buy-box buttons + image) preserved.
+ *  - Larger text / spacing / bold: long product description + reviews.
+ *  - High contrast / dim / dark / warm: low-contrast grey text on a bright background.
+ *  - Reduce motion: animated promo ticker + pulsing "deal ends" badge + chat pulse.
+ *  - Color distinction: green "In stock" / red "Only 3 left", and a red→green ratings chart.
+ *  - Reposition / read-aloud: a single main reading column with lots of text.
+ */
 
+const nav = ['Today’s Deals', 'Groceries', 'Health', 'Electronics', 'Home', 'Pharmacy', 'Books', 'Gift Cards', 'Registry', 'Customer Service'];
+const depts = ['Health & Household', 'Blood Pressure Monitors', 'Mobility Aids', 'Vision & Reading', 'Hearing', 'Daily Living Aids', 'Vitamins', 'First Aid'];
+const also = ['Pill Organizer, 7-Day', 'Digital Thermometer', 'Large-Display Wall Clock', 'Grip Jar Opener', 'Reading Magnifier 3x'];
+const footerCols = [
+  ['Get to Know Us', ['About', 'Careers', 'Press', 'Accessibility']],
+  ['Shop With Us', ['Your Account', 'Your Orders', 'Shipping Rates', 'Returns']],
+  ['Let Us Help', ['Help Center', 'Track a Package', 'Contact Us', 'Privacy']],
+  ['Departments', ['Health', 'Grocery', 'Pharmacy', 'Electronics']],
+  ['Languages', ['Español', '中文', 'Tagalog', 'Tiếng Việt']],
+];
+const stars = (n) => '★'.repeat(n) + '☆'.repeat(5 - n);
+
+export const STYLES = `
   .az-page{background:#f3f4f6;color:#8b8f98;font-size:13px;line-height:1.4;min-height:100vh;padding-bottom:120px}
   .az-page a{color:#7c86bb;text-decoration:none}
   .az-promo{background:linear-gradient(90deg,#ff9900,#ffcf66);color:#4a3400;text-align:center;padding:6px;font-size:12px;font-weight:800}
@@ -74,12 +93,9 @@
   .az-popup input{width:100%;padding:9px;margin:8px 0;border:1px solid #ccc;border-radius:6px}
   .az-chat{position:fixed;right:18px;bottom:70px;z-index:55;background:#007185;color:#fff;border-radius:999px;padding:12px 16px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:az-pulse 1.6s infinite}
   .vv-reading{background:#fde68a !important;color:#111 !important;box-shadow:0 0 0 4px #fde68a !important;border-radius:3px}
+`;
 
-</style>
-</head>
-<body>
-<div class="az-page">
-
+export const CONTENT = `
 <div class="az-promo">🔥 Spring Sale — up to 40% off health essentials <span class="az-deal">Deal ends in 02:14:57</span></div>
 <header class="az-nav">
   <span class="az-logo">ShopEasy</span>
@@ -87,13 +103,13 @@
   <span class="az-acct">Hello, sign in ▾</span>
   <span class="az-cart">🛒 Cart (2)</span>
 </header>
-<nav class="az-subnav"><a href="#">Today’s Deals</a><a href="#">Groceries</a><a href="#">Health</a><a href="#">Electronics</a><a href="#">Home</a><a href="#">Pharmacy</a><a href="#">Books</a><a href="#">Gift Cards</a><a href="#">Registry</a><a href="#">Customer Service</a></nav>
+<nav class="az-subnav">${nav.map((x) => `<a href="#">${x}</a>`).join('')}</nav>
 <div class="az-ticker"><span>Free shipping on orders over $35 • Same-day pickup at your local store • New senior discount program • Pharmacy auto-refill now available •</span></div>
 
 <div class="az-layout">
   <aside class="az-sidebar az-departments">
     <h4>Departments</h4>
-    <ul><li><a href="#">Health & Household</a></li><li><a href="#">Blood Pressure Monitors</a></li><li><a href="#">Mobility Aids</a></li><li><a href="#">Vision & Reading</a></li><li><a href="#">Hearing</a></li><li><a href="#">Daily Living Aids</a></li><li><a href="#">Vitamins</a></li><li><a href="#">First Aid</a></li></ul>
+    <ul>${depts.map((d) => `<li><a href="#">${d}</a></li>`).join('')}</ul>
     <h4>Filter by</h4>
     <div class="az-filter">
       <label><input type="checkbox"/> Prime eligible</label>
@@ -107,7 +123,7 @@
   <article class="az-product az-content">
     <div class="az-crumb">Health &amp; Household › Blood Pressure Monitors › ShopEasy</div>
     <h1>ShopEasy Automatic Blood Pressure Monitor with Large Backlit Display</h1>
-    <div class="az-rating">★★★★☆ <span class="az-count">1,204 ratings</span></div>
+    <div class="az-rating">${stars(4)} <span class="az-count">1,204 ratings</span></div>
 
     <div class="az-hero">
       <div class="az-gallery">
@@ -150,15 +166,15 @@
     </div>
 
     <h2>Customer reviews</h2>
-    <div class="az-review"><div class="az-who">Margaret T.</div><div class="az-stars">★★★★★</div><p>Finally a monitor I can actually read. The numbers are huge and it tells me the result out loud. My daughter set it up in a few minutes.</p></div>
-    <div class="az-review"><div class="az-who">Robert K.</div><div class="az-stars">★★★★☆</div><p>Accurate and simple. Only wish the case were a little larger. The one-button start is exactly what my father needed.</p></div>
-    <div class="az-review"><div class="az-who">Aisha N.</div><div class="az-stars">★★★★★</div><p>Bought this for my mother who has macular degeneration. The high-contrast display and voice readout make it usable for her without help.</p></div>
+    <div class="az-review"><div class="az-who">Margaret T.</div><div class="az-stars">${stars(5)}</div><p>Finally a monitor I can actually read. The numbers are huge and it tells me the result out loud. My daughter set it up in a few minutes.</p></div>
+    <div class="az-review"><div class="az-who">Robert K.</div><div class="az-stars">${stars(4)}</div><p>Accurate and simple. Only wish the case were a little larger. The one-button start is exactly what my father needed.</p></div>
+    <div class="az-review"><div class="az-who">Aisha N.</div><div class="az-stars">${stars(5)}</div><p>Bought this for my mother who has macular degeneration. The high-contrast display and voice readout make it usable for her without help.</p></div>
   </article>
 
   <aside class="az-sidebar az-related az-sponsored">
     <div class="az-adcard"><b>Sponsored</b><p>ShopEasy Pharmacy — transfer a prescription and get $10 off. Click to learn more.</p></div>
     <h4>Customers also bought</h4>
-    <div class="az-item"><span class="az-thumb"></span><a href="#">Pill Organizer, 7-Day</a></div><div class="az-item"><span class="az-thumb"></span><a href="#">Digital Thermometer</a></div><div class="az-item"><span class="az-thumb"></span><a href="#">Large-Display Wall Clock</a></div><div class="az-item"><span class="az-thumb"></span><a href="#">Grip Jar Opener</a></div><div class="az-item"><span class="az-thumb"></span><a href="#">Reading Magnifier 3x</a></div>
+    ${also.map((p) => `<div class="az-item"><span class="az-thumb"></span><a href="#">${p}</a></div>`).join('')}
     <h4>Today’s deals</h4>
     <p class="az-adcard">Digital scale — <b>30% off</b> today only.</p>
   </aside>
@@ -166,7 +182,7 @@
 
 <footer class="az-footer">
   <div class="az-cols">
-    <div><h5>Get to Know Us</h5><a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Accessibility</a></div><div><h5>Shop With Us</h5><a href="#">Your Account</a><a href="#">Your Orders</a><a href="#">Shipping Rates</a><a href="#">Returns</a></div><div><h5>Let Us Help</h5><a href="#">Help Center</a><a href="#">Track a Package</a><a href="#">Contact Us</a><a href="#">Privacy</a></div><div><h5>Departments</h5><a href="#">Health</a><a href="#">Grocery</a><a href="#">Pharmacy</a><a href="#">Electronics</a></div><div><h5>Languages</h5><a href="#">Español</a><a href="#">中文</a><a href="#">Tagalog</a><a href="#">Tiếng Việt</a></div>
+    ${footerCols.map(([h, links]) => `<div><h5>${h}</h5>${links.map((l) => `<a href="#">${l}</a>`).join('')}</div>`).join('')}
   </div>
 </footer>
 
@@ -181,7 +197,4 @@
   </div>
 </div>
 <div class="az-chat" id="az-chat" onclick="this.remove()">💬 Chat with us</div>
-
-</div>
-</body>
-</html>
+`;

@@ -10,7 +10,9 @@
     "test": "node tests/simplify.test.mjs && node tests/engine.test.mjs && node evals/run.mjs --assert",
     "eval": "node evals/run.mjs",
     "eval:api": "node evals/run.mjs --api",
+    "build:demo": "node scripts/build-demo.mjs",
     "build:playground": "node scripts/build-playground.mjs",
+    "build:pages": "node scripts/build-demo.mjs && node scripts/build-playground.mjs",
     "pack:extension": "cd extension && zip -r -FS ../voicevision-extension.zip . -x '.*'"
   },
   "dependencies": {
