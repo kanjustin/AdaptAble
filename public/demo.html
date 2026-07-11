@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>San Ramon Community Services — Demo</title>
+<style>
+  /* Deliberately hostile: bright background, low-contrast text, distracting motion,
+     dense chrome. This is a realistic "hard to use" page for testing VoiceVision.
+     The extension is NOT special-cased for it — it uses the same engine as any site. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fffdf5;
+    color: #9a9a90;            /* low contrast on near-white */
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  a { color: #a0a4b8; }
+  header.masthead {
+    background: #fef9e7;
+    border-bottom: 1px solid #f0e9cf;
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .logo { font-weight: 800; color: #c9a227; font-size: 18px; }
+  nav.topnav { display: flex; flex-wrap: wrap; gap: 10px; font-size: 12px; }
+  nav.topnav a { text-decoration: none; }
+  .promo {
+    background: linear-gradient(90deg, #ff6a00, #ffcf00);
+    color: #fff; text-align: center; padding: 6px; font-weight: 800; font-size: 12px;
+    animation: flash 0.8s steps(2, jump-none) infinite;
+  }
+  @keyframes flash { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .ticker { overflow: hidden; white-space: nowrap; background: #fff3cd; border-bottom: 1px solid #f0e9cf; }
+  .ticker span { display: inline-block; padding: 4px 0; animation: scroll 12s linear infinite; }
+  @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+  .layout { display: grid; grid-template-columns: 190px 1fr 210px; gap: 14px; padding: 14px; }
+  aside {
+    background: #fef9e7; border: 1px solid #f3ecd2; border-radius: 6px; padding: 10px;
+    font-size: 12px;
+  }
+  aside h4 { margin: 4px 0 8px; color: #b58e1f; font-size: 12px; }
+  aside ul { margin: 0; padding-left: 16px; }
+  aside li { margin: 3px 0; }
+
+  main { background: #fffef9; border: 1px solid #f3ecd2; border-radius: 6px; padding: 18px; }
+  article h1 { color: #8a7a3a; font-size: 22px; margin: 0 0 6px; }
+  article h2 { color: #97853f; font-size: 16px; margin: 18px 0 6px; }
+  article p { margin: 10px 0; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .btn { background: #2563eb; color: #fff; border: none; border-radius: 6px; padding: 10px 14px; font-weight: 700; cursor: pointer; font-size: 13px; }
+  .btn.secondary { background: #e5e7eb; color: #374151; }
+  figure { margin: 14px 0; }
+  figure img { width: 100%; border-radius: 6px; display: block; }
+  figcaption { font-size: 11px; color: #b3b3a6; margin-top: 4px; }
+
+  footer { background: #fef9e7; border-top: 1px solid #f0e9cf; padding: 16px; margin-top: 14px; font-size: 11px; }
+  footer .cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  footer a { display: block; text-decoration: none; margin: 2px 0; }
+
+  /* Cookie banner (fixed) */
+  .cookie-consent {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    background: #1f2937; color: #e5e7eb; padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px; font-size: 12px;
+  }
+  .cookie-consent button { margin-left: auto; }
+
+  /* Newsletter modal popup */
+  .newsletter-popup {
+    position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .newsletter-popup .box {
+    background: #fff; color: #333; border-radius: 10px; padding: 22px; width: 300px; text-align: center;
+  }
+  .newsletter-popup h3 { margin: 0 0 8px; }
+  .newsletter-popup .close { position: absolute; top: 14px; right: 18px; background: #fff; border: none; font-size: 20px; cursor: pointer; border-radius: 999px; width: 34px; height: 34px; }
+
+  .status-chart .bar { display: flex; align-items: center; gap: 6px; margin: 4px 0; font-size: 12px; }
+  .swatch { width: 46px; height: 14px; border-radius: 3px; }
+</style>
+</head>
+<body>
+  <div class="promo">🔥 LIMITED TIME: Renew your parking permit online and skip the line! 🔥</div>
+  <div class="ticker"><span>Breaking: Library hours extended • Water bill due Friday • Flu shots available at community center • Road closure on Bollinger Canyon • Senior shuttle sign-ups open •</span></div>
+
+  <header class="masthead">
+    <div class="logo">San Ramon Services</div>
+    <nav class="topnav" aria-label="Primary">
+      <a href="#">Home</a><a href="#">Utilities</a><a href="#">Permits</a><a href="#">Transit</a>
+      <a href="#">Health</a><a href="#">Library</a><a href="#">Parks</a><a href="#">Police</a>
+      <a href="#">Fire</a><a href="#">Waste</a><a href="#">Taxes</a><a href="#">Jobs</a>
+      <a href="#">Events</a><a href="#">Contact</a><a href="#">Login</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT SIDEBAR -->
+    <aside aria-label="Related links">
+      <h4>Related Services</h4>
+      <ul>
+        <li><a href="#">Pay water bill</a></li>
+        <li><a href="#">Report an outage</a></li>
+        <li><a href="#">Trash pickup schedule</a></li>
+        <li><a href="#">Senior transport</a></li>
+        <li><a href="#">Flu clinic hours</a></li>
+        <li><a href="#">Pharmacy refills</a></li>
+        <li><a href="#">Property tax portal</a></li>
+        <li><a href="#">Jury duty</a></li>
+      </ul>
+      <h4>Popular</h4>
+      <ul>
+        <li><a href="#">Parking permits</a></li>
+        <li><a href="#">Dog licenses</a></li>
+        <li><a href="#">Voter info</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <article>
+        <h1>How to Refill a Prescription and Pay Your Utility Bill Online</h1>
+        <p>This guide explains, step by step, how residents of San Ramon can refill a
+        prescription at the community pharmacy and pay a monthly utility bill without
+        visiting an office in person. These services are available around the clock and
+        are designed to be usable from a phone, tablet, or computer.</p>
+
+        <div class="actions">
+          <button class="btn">Refill prescription</button>
+          <button class="btn">Pay utility bill</button>
+          <button class="btn secondary">Schedule shuttle</button>
+        </div>
+
+        <h2>Refilling a prescription</h2>
+        <p>To refill a prescription, you will need the prescription number printed on the
+        side of your medicine bottle. Enter that number, confirm your date of birth, and
+        choose whether you want to pick the medication up or have it delivered. Most
+        refills are ready within four hours. If the pharmacist needs to contact your
+        doctor for a renewal, it may take one business day.</p>
+        <p>If you take several medications, you can enroll in synchronized refills so that
+        all of your prescriptions are ready on the same day each month. This reduces the
+        number of trips you need to make and makes it easier to keep track of what you
+        have taken.</p>
+
+        <figure>
+          <img alt="Community pharmacy counter" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='220'><rect width='600' height='220' fill='%23d8e3f0'/><text x='50%25' y='50%25' font-family='Arial' font-size='20' fill='%235b6b82' text-anchor='middle'>Community Pharmacy</text></svg>" />
+          <figcaption>The community pharmacy counter is open 8am–8pm on weekdays.</figcaption>
+        </figure>
+
+        <h2>Paying a utility bill</h2>
+        <p>To pay a utility bill, sign in with your account number and the last name on the
+        account. You can pay a one-time amount, or set up automatic monthly payments from a
+        bank account or card. A receipt is emailed to you immediately, and your payment
+        history is stored so you can review past bills at any time.</p>
+        <p>If your bill is higher than usual, you can request a review or apply for the
+        low-income assistance program directly from the same page. Payment plans are
+        available for households that need to spread a large balance over several months.</p>
+
+        <h2>Current service status</h2>
+        <div class="status-chart">
+          <div class="bar"><span class="swatch" style="background:#22c55e"></span> Water portal — operating normally</div>
+          <div class="bar"><span class="swatch" style="background:#ef4444"></span> Prescription delivery — delayed today</div>
+          <div class="bar"><span class="swatch" style="background:#22c55e"></span> Senior shuttle — on schedule</div>
+          <div class="bar"><span class="swatch" style="background:#ef4444"></span> Permit office — closed for maintenance</div>
+          <svg width="320" height="120" role="img" aria-label="Weekly uptime by service">
+            <rect x="20" y="20" width="40" height="80" fill="#22c55e"></rect>
+            <rect x="80" y="50" width="40" height="50" fill="#ef4444"></rect>
+            <rect x="140" y="30" width="40" height="70" fill="#22c55e"></rect>
+            <rect x="200" y="60" width="40" height="40" fill="#ef4444"></rect>
+            <rect x="260" y="35" width="40" height="65" fill="#22c55e"></rect>
+          </svg>
+          <p style="font-size:11px">Green means the service is up; red means it is down. (Color is the only cue here — a barrier for many users.)</p>
+        </div>
+
+        <h2>Getting help</h2>
+        <p>If you get stuck at any point, call the resident help line at the number listed
+        on your bill, or visit the community center where a staff member can walk you
+        through the process. Large-print instructions and translated versions are available
+        on request.</p>
+      </article>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside aria-label="Advertisements and widgets">
+      <h4>Sponsored</h4>
+      <p style="background:#fff3cd;padding:8px;border-radius:6px">Get 20% off home solar — click now!</p>
+      <h4>Weather</h4>
+      <p>Sunny, 78°F. Air quality: moderate.</p>
+      <h4>Follow us</h4>
+      <ul>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Nextdoor</a></li>
+      </ul>
+      <h4>Newsletter</h4>
+      <p>Sign up for weekly updates from the city.</p>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="cols">
+      <div><a href="#">About</a><a href="#">Careers</a><a href="#">Press</a><a href="#">Accessibility</a></div>
+      <div><a href="#">Utilities</a><a href="#">Permits</a><a href="#">Transit</a><a href="#">Health</a></div>
+      <div><a href="#">Library</a><a href="#">Parks</a><a href="#">Police</a><a href="#">Fire</a></div>
+      <div><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Sitemap</a><a href="#">FAQ</a></div>
+      <div><a href="#">Español</a><a href="#">中文</a><a href="#">Tagalog</a><a href="#">Contact</a></div>
+    </div>
+  </footer>
+
+  <!-- Cookie banner -->
+  <div class="cookie-consent" id="cookieBanner">
+    <span>🍪 We use cookies to improve your experience. By continuing you accept our cookie policy.</span>
+    <button class="btn" onclick="document.getElementById('cookieBanner').remove()">Accept</button>
+  </div>
+
+  <!-- Newsletter popup -->
+  <div class="newsletter-popup" id="newsletterPopup" role="dialog" aria-modal="true" aria-label="Newsletter signup">
+    <button class="close" aria-label="Close" onclick="document.getElementById('newsletterPopup').remove()">×</button>
+    <div class="box">
+      <h3>📬 Don't miss out!</h3>
+      <p>Subscribe to the San Ramon weekly newsletter.</p>
+      <input type="email" placeholder="you@example.com" style="width:100%;padding:8px;margin:8px 0;border:1px solid #ccc;border-radius:6px" />
+      <button class="btn" style="width:100%" onclick="document.getElementById('newsletterPopup').remove()">Subscribe</button>
+    </div>
+  </div>
+</body>
+</html>
