@@ -12,8 +12,8 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" vi
   <g fill="#e8631a">${[0, 45, 90, 135].map(spoke).join('')}</g>
 </svg>`;
 
-fs.mkdirSync('comis/icons', { recursive: true });
+fs.mkdirSync('adaptable/icons', { recursive: true });
 for (const size of [16, 32, 48, 128]) {
-  await sharp(Buffer.from(svg)).resize(size, size).png().toFile(`comis/icons/icon-${size}.png`);
-  console.log(`wrote comis/icons/icon-${size}.png`);
+  await sharp(Buffer.from(svg)).resize(size, size).png().toFile(`adaptable/icons/icon-${size}.png`);
+  console.log(`wrote adaptable/icons/icon-${size}.png`);
 }

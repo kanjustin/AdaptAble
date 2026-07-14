@@ -1,7 +1,7 @@
 /**
  * Generates public/playground.html — a zero-install, in-browser preview of the
- * AdaptAble extension. It inlines the REAL comis/parser.js and
- * comis/simplify.js (so the parser + Simplify Page logic never diverge from the
+ * AdaptAble extension. It inlines the REAL adaptable/parser.js and
+ * adaptable/simplify.js (so the parser + Simplify Page logic never diverge from the
  * shipped extension) plus a compact engine that mirrors content.js's transforms,
  * scoped to #vv-content so the control panel itself isn't transformed.
  *
@@ -10,8 +10,8 @@
 import fs from 'node:fs';
 import { STYLES, CONTENT } from './demo-content.mjs';
 
-const parser = fs.readFileSync('./comis/parser.js', 'utf8');
-const simplify = fs.readFileSync('./comis/simplify.js', 'utf8');
+const parser = fs.readFileSync('./adaptable/parser.js', 'utf8');
+const simplify = fs.readFileSync('./adaptable/simplify.js', 'utf8');
 
 const ENGINE = String.raw`
 (function () {
@@ -131,10 +131,10 @@ ${STYLES}
   <p class="pg-foot">Works offline · No account · Page content never sent</p>
 </div>
 
-<script>/* --- real comis/parser.js --- */
+<script>/* --- real adaptable/parser.js --- */
 ${parser}
 </script>
-<script>/* --- real comis/simplify.js --- */
+<script>/* --- real adaptable/simplify.js --- */
 ${simplify}
 </script>
 <script>/* --- compact preview engine (mirrors content.js, scoped to #vv-content) --- */

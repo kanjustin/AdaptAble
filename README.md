@@ -61,7 +61,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY.md](SECURITY.md), [PRIVACY.md]
 
 1. `git clone https://github.com/kanjustin/AdaptAble.git`
 2. Open `chrome://extensions`, enable **Developer mode** (top-right).
-3. Click **Load unpacked** and select the **`comis/`** folder.
+3. Click **Load unpacked** and select the **`adaptable/`** folder.
 4. Open any normal website and click the AdaptAble toolbar icon.
 5. Type or speak a request (e.g. *"simplify this page and make the text bigger"*).
 
@@ -89,7 +89,7 @@ npm run lint           # eslint (0 errors)
 npm test               # simplify regression test + parser eval (asserts thresholds)
 npm run eval           # parser evaluation report (local)
 npm run eval:api       # also exercise the live Gemini fallback
-npm run pack:comis # zip the comis/ folder for distribution
+npm run pack:adaptable # zip the adaptable/ folder for distribution
 ```
 
 ## Evaluation (real, measured — not fabricated)

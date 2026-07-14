@@ -1,11 +1,11 @@
 /**
- * Dev-only: renders comis/popup.html as a static, script-free preview card so the
+ * Dev-only: renders adaptable/popup.html as a static, script-free preview card so the
  * popup design can be viewed in a normal browser / artifact. Not shipped in the extension.
  * Usage: node scripts/build-popup-preview.mjs <outfile>
  */
 import fs from 'node:fs';
 
-const html = fs.readFileSync('comis/popup.html', 'utf8');
+const html = fs.readFileSync('adaptable/popup.html', 'utf8');
 let style = (html.match(/<style>([\s\S]*?)<\/style>/) || ['', ''])[1];
 // scope the popup's page-level `body` rule to the preview card
 style = style.replace(/\n\s*body \{/, '\n  .pv-popup {');

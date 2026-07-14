@@ -8,7 +8,7 @@ AdaptAble is a **hybrid interpretation system**, not a thin LLM wrapper. The mod
 │ brain       │              ▼
 └─────────────┘     ┌───────────────────────┐  confident (status=ok)
       ▲             │ Local parser (UMD)    │────────────────────────────┐
-      │ state/trace │ comis/parser.js   │                            │
+      │ state/trace │ adaptable/parser.js   │                            │
       │             └───────────┬───────────┘                            │
       │                         │ ambiguous (needs_api)                  │
       │                         ▼                                        ▼
@@ -25,10 +25,10 @@ AdaptAble is a **hybrid interpretation system**, not a thin LLM wrapper. The mod
 
 | File | Role |
 |---|---|
-| `comis/parser.js` | **Local deterministic parser** (UMD). Ordered rule set → structured command. Rejects prompt-injection, routes ambiguous wording to the AI, refuses off-topic input. Shared verbatim with the eval harness. |
-| `comis/simplify.js` | **Simplify Page.** Deterministic main-content extraction + reversible declutter. Exposes `window.__VV_SIMPLIFY`. |
-| `comis/content.js` | **Action engine ("hands").** Typed state, undo stack, all predefined DOM/CSS transforms, TTS, MutationObserver for dynamic pages, full teardown. Only applies commands; never interprets. |
-| `comis/popup.{html,js}` | **Control surface ("brain").** Assist/Simulation tabs, local-parser-first pipeline, API call with timeout, client-side command sanitization, transparency trace, privacy panel, debug metrics, offline banner. |
+| `adaptable/parser.js` | **Local deterministic parser** (UMD). Ordered rule set → structured command. Rejects prompt-injection, routes ambiguous wording to the AI, refuses off-topic input. Shared verbatim with the eval harness. |
+| `adaptable/simplify.js` | **Simplify Page.** Deterministic main-content extraction + reversible declutter. Exposes `window.__VV_SIMPLIFY`. |
+| `adaptable/content.js` | **Action engine ("hands").** Typed state, undo stack, all predefined DOM/CSS transforms, TTS, MutationObserver for dynamic pages, full teardown. Only applies commands; never interprets. |
+| `adaptable/popup.{html,js}` | **Control surface ("brain").** Assist/Simulation tabs, local-parser-first pipeline, API call with timeout, client-side command sanitization, transparency trace, privacy panel, debug metrics, offline banner. |
 | `src/lib/assist/schema.ts` | **Strict Zod command schema** (source of validation truth, server-side). |
 | `src/app/api/interpret/route.ts` | **Gemini fallback.** Assist-first prompt, Zod validation, timeout, rate limit, CORS lock, size caps. |
 | `public/demo.html` | Cluttered demo page (same engine runs here and on real sites). |

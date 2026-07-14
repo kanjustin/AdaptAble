@@ -3,7 +3,7 @@
 A reliable ~2-minute demo that does **not** depend on any external website.
 
 ## Setup (once, before the demo)
-1. `chrome://extensions` → **Developer mode** on → **Load unpacked** → select `comis/`.
+1. `chrome://extensions` → **Developer mode** on → **Load unpacked** → select `adaptable/`.
 2. **AI fallback** (only needed for the "vague wording" step): the deployed API must be running the current code. Two options:
    - **Redeploy** this branch to Vercel (the old deploy uses a retired Gemini model and will 500), **or**
    - **Local**: run `npm run dev`, then in the extension's service-worker/popup console run

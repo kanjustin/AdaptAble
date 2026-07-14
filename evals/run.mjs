@@ -1,7 +1,7 @@
 /**
  * AdaptAble — local parser evaluation.
  *
- * Runs the SHIPPED parser (comis/parser.js) over a labeled dataset and reports
+ * Runs the SHIPPED parser (adaptable/parser.js) over a labeled dataset and reports
  * real, measured metrics. No numbers are fabricated. AI-fallback cases are only tested
  * live with `--api` (needs network + the deployed endpoint); otherwise they are counted
  * as "routed to AI" and clearly labeled skipped.
@@ -13,7 +13,7 @@
 import { createRequire } from 'module';
 import fs from 'node:fs';
 const require = createRequire(import.meta.url);
-const P = require('../comis/parser.js');
+const P = require('../adaptable/parser.js');
 
 const API_URL = process.env.VV_API_URL || 'https://voicevision-eight.vercel.app/api/interpret';
 const args = new Set(process.argv.slice(2));
