@@ -1,4 +1,4 @@
-# Comis
+# AdaptAble
 
 **A voice-controlled accessibility layer for the web.** Describe what's hard about a webpage in your own words — *"this is too small,"* *"the page is too busy,"* *"the white hurts my eyes"* — and Comis safely restructures the page around your needs. No settings menus, no jargon, no contrast ratios.
 
