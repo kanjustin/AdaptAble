@@ -21,7 +21,7 @@ body = body.replace(/<div id="adaptations" class="chips">[\s\S]*?<\/span><\/div>
 body = body.replace('<details id="traceBox">', '<details id="traceBox" open>');
 body = body.replace('<div>Run a command to see how it was interpreted.</div>',
   `<div><b>You said: </b>“this page is overwhelming and the text is too small”</div>
-   <div><b>Comis interpreted: </b>Simplified the page, Larger text.</div>
+   <div><b>AdaptAble interpreted: </b>Simplified the page, Larger text.</div>
    <div><b>Interpreted by: </b><span class="pill local">Local parser</span></div>
    <div><b>Confidence: </b>90%</div>
    <div><b>Processing time: </b>7 ms</div>

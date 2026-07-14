@@ -16,7 +16,7 @@ The demo page is a deliberately hostile "San Ramon Community Services" page: bri
 ## Script
 
 1. **Open the cluttered demo page.** Let the judges see how busy and low-contrast it is.
-2. Open Comis, and say / type: **“This page is overwhelming and the text is too small.”**
+2. Open AdaptAble, and say / type: **“This page is overwhelming and the text is too small.”**
    → Simplify hides ~8 clutter blocks (nav, sidebars, footer, cookie banner, popup, promo, ticker), keeps the article, and enlarges the text. The status line reads what changed.
 3. Say: **“Move the content to the right and stop all the movement.”**
    → Compound command: the reading column shifts right and animations stop. (Shows compound + reversibility.)

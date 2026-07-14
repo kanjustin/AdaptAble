@@ -1,5 +1,5 @@
 /**
- * Comis — local parser evaluation.
+ * AdaptAble — local parser evaluation.
  *
  * Runs the SHIPPED parser (comis/parser.js) over a labeled dataset and reports
  * real, measured metrics. No numbers are fabricated. AI-fallback cases are only tested
@@ -105,7 +105,7 @@ const localStatusCorrect = localExpected.filter((c) => P.parse(c.text, null).sta
 
 // ---- Report ----
 const pctStr = (n, d) => `${((n / (d || 1)) * 100).toFixed(1)}%`;
-console.log('\n=== Comis — Local Parser Evaluation ===');
+console.log('\n=== AdaptAble — Local Parser Evaluation ===');
 console.log(`Dataset: ${cases.length} labeled commands across ${new Set(cases.map((c) => c.category)).size} categories\n`);
 console.log(`Exact intent accuracy (ok cases)   ${exactCorrect}/${okTotal}   ${pctStr(exactCorrect, okTotal)}`);
 console.log(`Field precision                    ${precision.toFixed(3)}`);

@@ -1,6 +1,6 @@
 /**
  * Generates the extension toolbar/store icons from one SVG.
- * The Comis mark: an orange 8-spoke asterisk on the ink square (matches the popup wordmark).
+ * The AdaptAble mark: an orange 8-spoke asterisk on the ink square (matches the popup wordmark).
  * Run: npm run build:icons
  */
 import sharp from 'sharp';

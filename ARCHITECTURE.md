@@ -1,6 +1,6 @@
 # Architecture
 
-Comis is a **hybrid interpretation system**, not a thin LLM wrapper. The model is only one optional stage, and it can never touch the DOM.
+AdaptAble is a **hybrid interpretation system**, not a thin LLM wrapper. The model is only one optional stage, and it can never touch the DOM.
 
 ```
 ┌─────────────┐   transcript / typed text

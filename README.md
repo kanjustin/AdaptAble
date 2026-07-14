@@ -1,6 +1,6 @@
-# Comis
+# AdaptAble
 
-**A voice-controlled accessibility layer for the web.** Describe what's hard about a webpage in your own words — *"this is too small,"* *"the page is too busy,"* *"the white hurts my eyes"* — and Comis safely restructures the page around your needs. No settings menus, no jargon, no contrast ratios.
+**A voice-controlled accessibility layer for the web.** Describe what's hard about a webpage in your own words — *"this is too small,"* *"the page is too busy,"* *"the white hurts my eyes"* — and AdaptAble safely restructures the page around your needs. No settings menus, no jargon, no contrast ratios.
 
 Built for **The Vakathon** (San Ramon, CA — July 11, 2026). Theme: *code that makes a real, useful impact in the community.*
 
@@ -62,7 +62,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md), [SECURITY.md](SECURITY.md), [PRIVACY.md]
 1. `git clone https://github.com/kanjustin/AdaptAble.git`
 2. Open `chrome://extensions`, enable **Developer mode** (top-right).
 3. Click **Load unpacked** and select the **`comis/`** folder.
-4. Open any normal website and click the Comis toolbar icon.
+4. Open any normal website and click the AdaptAble toolbar icon.
 5. Type or speak a request (e.g. *"simplify this page and make the text bigger"*).
 
 The extension calls a small hosted API only for ambiguous phrasing; everything else runs locally.
@@ -115,7 +115,7 @@ The 15 core commands run with no network. If the AI is unreachable, an `AbortCon
 - Some strict-CSP or heavily-scripted SPAs limit content scripts or re-render faster than Simplify re-applies.
 - Web Speech **recognition** is Chrome/Edge + HTTPS only; typed input always works. Read-aloud uses `speechSynthesis` where available.
 - Simplify heuristics can mis-pick the main content on unusual layouts — **Undo/Reset are always safe**.
-- No medical claims. Comis does not diagnose or treat any condition.
+- No medical claims. AdaptAble does not diagnose or treat any condition.
 
 See [TESTED_SITES.md](TESTED_SITES.md), [DEMO.md](DEMO.md), and [HACKATHON_PITCH.md](HACKATHON_PITCH.md).
 

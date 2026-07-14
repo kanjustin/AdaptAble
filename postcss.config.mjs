@@ -1,4 +1,4 @@
-// PostCSS + Tailwind configuration for the Comis web app.
+// PostCSS + Tailwind configuration for the AdaptAble web app.
 const config = {
   plugins: {
     "@tailwindcss/postcss": {},

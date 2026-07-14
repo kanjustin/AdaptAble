@@ -3,7 +3,7 @@
  * in the Amazon *style* (not real Amazon branding). Single source of truth for both
  * public/demo.html (extension target + tests) and public/playground.html (browser preview).
  *
- * Deliberately exercises EVERY Comis capability:
+ * Deliberately exercises EVERY AdaptAble capability:
  *  - Simplify: dense nav, left filter sidebar, right sponsored/related sidebar, footer,
  *    cookie banner, newsletter popup, floating chat widget, animated promo ticker — all
  *    removed; the <article> product detail (with its buy-box buttons + image) preserved.

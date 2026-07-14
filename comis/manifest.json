@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Comis",
+  "name": "AdaptAble",
   "version": "2.3.0",
-  "description": "Describe what's hard about a webpage in plain words — Comis safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
+  "description": "Describe what's hard about a webpage in plain words — AdaptAble safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
   "permissions": ["activeTab", "storage", "scripting"],
   "icons": {
     "16": "icons/icon-16.png",
@@ -12,7 +12,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Comis — describe what's hard, the page adapts",
+    "default_title": "AdaptAble — describe what's hard, the page adapts",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
@@ -23,7 +23,7 @@
   "commands": {
     "_execute_action": {
       "suggested_key": { "default": "Alt+Shift+V", "mac": "Alt+Shift+V" },
-      "description": "Open Comis"
+      "description": "Open AdaptAble"
     }
   },
   "content_scripts": [
