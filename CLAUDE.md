@@ -1,8 +1,8 @@
-# Comis — Claude Code Context
+# AdaptAble — Claude Code Context
 
 ## What This Is
 
-Comis is a voice-activated accessibility layer built for a 90-minute hackathon sprint. Users speak natural language commands describing their visual needs or impairments, Gemini 2.5 Flash interprets intent, and the app applies the correct CSS/SVG visual transforms to the screen in real time.
+AdaptAble is a voice-activated accessibility layer built for a 90-minute hackathon sprint. Users speak natural language commands describing their visual needs or impairments, Gemini 2.5 Flash interprets intent, and the app applies the correct CSS/SVG visual transforms to the screen in real time.
 
 **Track:** AI for Accessibility (Humans in AI Week hackathon)  
 **Constraint:** Everything must be built within the hackathon window.  

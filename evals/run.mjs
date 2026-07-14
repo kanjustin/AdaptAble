@@ -1,7 +1,7 @@
 /**
- * Comis — local parser evaluation.
+ * AdaptAble — local parser evaluation.
  *
- * Runs the SHIPPED parser (comis/parser.js) over a labeled dataset and reports
+ * Runs the SHIPPED parser (adaptable/parser.js) over a labeled dataset and reports
  * real, measured metrics. No numbers are fabricated. AI-fallback cases are only tested
  * live with `--api` (needs network + the deployed endpoint); otherwise they are counted
  * as "routed to AI" and clearly labeled skipped.
@@ -13,7 +13,7 @@
 import { createRequire } from 'module';
 import fs from 'node:fs';
 const require = createRequire(import.meta.url);
-const P = require('../comis/parser.js');
+const P = require('../adaptable/parser.js');
 
 const API_URL = process.env.VV_API_URL || 'https://voicevision-eight.vercel.app/api/interpret';
 const args = new Set(process.argv.slice(2));
@@ -105,7 +105,7 @@ const localStatusCorrect = localExpected.filter((c) => P.parse(c.text, null).sta
 
 // ---- Report ----
 const pctStr = (n, d) => `${((n / (d || 1)) * 100).toFixed(1)}%`;
-console.log('\n=== Comis — Local Parser Evaluation ===');
+console.log('\n=== AdaptAble — Local Parser Evaluation ===');
 console.log(`Dataset: ${cases.length} labeled commands across ${new Set(cases.map((c) => c.category)).size} categories\n`);
 console.log(`Exact intent accuracy (ok cases)   ${exactCorrect}/${okTotal}   ${pctStr(exactCorrect, okTotal)}`);
 console.log(`Field precision                    ${precision.toFixed(3)}`);

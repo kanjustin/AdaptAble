@@ -1,5 +1,5 @@
 {
-  "name": "comis",
+  "name": "adaptable",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,7 +14,7 @@
     "build:demo": "node scripts/build-demo.mjs",
     "build:playground": "node scripts/build-playground.mjs",
     "build:pages": "node scripts/build-demo.mjs && node scripts/build-playground.mjs",
-    "pack:comis": "cd comis && zip -r -FS ../comis.zip . -x '.*'"
+    "pack:adaptable": "cd adaptable && zip -r -FS ../adaptable.zip . -x '.*'"
   },
   "dependencies": {
     "@google/genai": "^2.8.0",

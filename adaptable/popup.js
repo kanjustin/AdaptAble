@@ -1,5 +1,5 @@
 /**
- * Comis — popup orchestration (the "brain").
+ * AdaptAble — popup orchestration (the "brain").
  *
  * Flow: transcript → local parser (instant, offline) → if not confident, the Gemini
  * API (with a hard AbortController timeout) → validate/sanitize → send a predefined
@@ -207,7 +207,7 @@ function updateTrace(info) {
   };
   const pill = (text, cls) => { const s = document.createElement('span'); s.className = 'pill ' + cls; s.textContent = text; return s; };
   add('You said', info.said ? `“${info.said}”` : '(nothing)');
-  add('Comis interpreted', info.interpreted || '—');
+  add('AdaptAble interpreted', info.interpreted || '—');
   add('Interpreted by', pill(info.source === 'local' ? 'Local parser' : 'Gemini', info.source === 'local' ? 'local' : 'gemini'));
   if (typeof info.confidence === 'number') add('Confidence', Math.round(info.confidence * 100) + '%');
   if (typeof info.total === 'number') add('Processing time', info.total.toFixed(0) + ' ms');
@@ -363,5 +363,5 @@ window.addEventListener('offline', refreshOnline);
   });
   const resp = await sendToActiveTab({ type: 'GET_STATE' });
   if (resp) render(resp);
-  else setStatus('Open a normal webpage, then reopen Comis to adapt it.');
+  else setStatus('Open a normal webpage, then reopen AdaptAble to adapt it.');
 })();

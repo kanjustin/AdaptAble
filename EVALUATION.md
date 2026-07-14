@@ -1,6 +1,6 @@
 # Evaluation
 
-We evaluate the **shipped** local parser (`comis/parser.js` — the exact same file the extension loads) against a hand-labeled dataset. Numbers are **measured, not fabricated**. Re-run any time:
+We evaluate the **shipped** local parser (`adaptable/parser.js` — the exact same file the extension loads) against a hand-labeled dataset. Numbers are **measured, not fabricated**. Re-run any time:
 
 ```bash
 npm run eval          # local parser only

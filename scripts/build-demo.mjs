@@ -10,7 +10,7 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>ShopEasy — Blood Pressure Monitor (Comis demo page)</title>
+<title>ShopEasy — Blood Pressure Monitor (AdaptAble demo page)</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif}
