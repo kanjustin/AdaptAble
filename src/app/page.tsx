@@ -151,7 +151,7 @@ export default function Home() {
             Accessibility assistance
           </div>
           <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-800 bg-clip-text text-transparent">
-            Comis
+            AdaptAble
           </h1>
           <p className="text-gray-500 mt-2 text-lg">
             Describe what&apos;s hard about a page in your own words. The page adapts to you.

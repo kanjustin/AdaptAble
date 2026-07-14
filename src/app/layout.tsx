@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Comis",
-  description: "Describe what's hard about a webpage in plain words — Comis safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
+  title: "AdaptAble",
+  description: "Describe what's hard about a webpage in plain words — AdaptAble safely adapts it. Larger text, less clutter, calmer colors, read-aloud.",
 };
 
 export default function RootLayout({

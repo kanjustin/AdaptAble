@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Comis — Browser Playground</title>
+<title>AdaptAble — Browser Playground</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif;background:#e3e6e6}
@@ -209,7 +209,7 @@
 </div>
 
 <div id="vv-panel">
-  <div class="pg-head"><span class="mark">✳</span><h2>Comis</h2></div>
+  <div class="pg-head"><span class="mark">✳</span><h2>AdaptAble</h2></div>
   <p class="sub">Browser playground — the real parser &amp; Simplify engine from the extension.</p>
   <div class="pg-bar">
     <input id="pg-input" type="text" placeholder="Say what's hard… e.g. this is too small"/>
@@ -241,9 +241,9 @@
   <p class="pg-foot">Works offline · No account · Page content never sent</p>
 </div>
 
-<script>/* --- real comis/parser.js --- */
+<script>/* --- real adaptable/parser.js --- */
 /**
- * Comis — Local deterministic command parser (Assist Mode).
+ * AdaptAble — Local deterministic command parser (Assist Mode).
  *
  * This is the PRIMARY interpretation path. It runs instantly, offline, with zero
  * network calls, and covers the common accessibility commands. Only when it is not
@@ -567,7 +567,7 @@
       return { command: null, source: 'local', confidence: 1, status: 'empty', matched: [], explanation: 'Please say or type an accessibility request.' };
     }
     if (INJECTION.test(raw)) {
-      return { command: null, source: 'local', confidence: 1, status: 'refused', matched: ['safety'], explanation: 'For safety, Comis only performs predefined accessibility adaptations — it cannot run code or follow instructions embedded in requests.' };
+      return { command: null, source: 'local', confidence: 1, status: 'refused', matched: ['safety'], explanation: 'For safety, AdaptAble only performs predefined accessibility adaptations — it cannot run code or follow instructions embedded in requests.' };
     }
 
     const t = normalize(raw);
@@ -616,16 +616,16 @@
     if (ACCESSIBILITY_HINT.test(t)) {
       return { command: null, source: 'local', confidence: 0.3, status: 'needs_api', matched: [], explanation: 'Interpreting your request…' };
     }
-    return { command: null, source: 'local', confidence: 0.6, status: 'unsupported', matched: [], explanation: "Comis adapts webpages for easier reading and viewing. Try things like “make the text bigger” or “this page is too busy.”" };
+    return { command: null, source: 'local', confidence: 0.6, status: 'unsupported', matched: [], explanation: "AdaptAble adapts webpages for easier reading and viewing. Try things like “make the text bigger” or “this page is too busy.”" };
   }
 
   return { parse, describe, emptyCommand, isEmptyCommand, normalize, OFF_VALUE, _RULES: RULES };
 });
 
 </script>
-<script>/* --- real comis/simplify.js --- */
+<script>/* --- real adaptable/simplify.js --- */
 /**
- * Comis — Simplify = make the page's TEXT easier to read and understand.
+ * AdaptAble — Simplify = make the page's TEXT easier to read and understand.
  *
  * It does NOT change the site's layout: nothing is hidden, moved, or restructured.
  * It only injects a gentle readability stylesheet — larger text, more line-height,
@@ -645,7 +645,7 @@
   // ---- readability stylesheet (text only — no layout changes) ----
   function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
-    // Never restyle Comis's own on-page UI (the playground panel / find badge).
+    // Never restyle AdaptAble's own on-page UI (the playground panel / find badge).
     const EX = ':not(#vv-panel):not(#vv-panel *):not(#vv-find-badge):not(#vv-find-badge *)';
     const style = document.createElement('style');
     style.id = STYLE_ID;

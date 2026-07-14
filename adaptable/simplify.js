@@ -1,5 +1,5 @@
 /**
- * Comis — Simplify = make the page's TEXT easier to read and understand.
+ * AdaptAble — Simplify = make the page's TEXT easier to read and understand.
  *
  * It does NOT change the site's layout: nothing is hidden, moved, or restructured.
  * It only injects a gentle readability stylesheet — larger text, more line-height,
@@ -19,7 +19,7 @@
   // ---- readability stylesheet (text only — no layout changes) ----
   function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
-    // Never restyle Comis's own on-page UI (the playground panel / find badge).
+    // Never restyle AdaptAble's own on-page UI (the playground panel / find badge).
     const EX = ':not(#vv-panel):not(#vv-panel *):not(#vv-find-badge):not(#vv-find-badge *)';
     const style = document.createElement('style');
     style.id = STYLE_ID;

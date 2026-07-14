@@ -1,7 +1,7 @@
 /**
  * Generates public/playground.html — a zero-install, in-browser preview of the
- * Comis extension. It inlines the REAL comis/parser.js and
- * comis/simplify.js (so the parser + Simplify Page logic never diverge from the
+ * AdaptAble extension. It inlines the REAL adaptable/parser.js and
+ * adaptable/simplify.js (so the parser + Simplify Page logic never diverge from the
  * shipped extension) plus a compact engine that mirrors content.js's transforms,
  * scoped to #vv-content so the control panel itself isn't transformed.
  *
@@ -10,8 +10,8 @@
 import fs from 'node:fs';
 import { STYLES, CONTENT } from './demo-content.mjs';
 
-const parser = fs.readFileSync('./comis/parser.js', 'utf8');
-const simplify = fs.readFileSync('./comis/simplify.js', 'utf8');
+const parser = fs.readFileSync('./adaptable/parser.js', 'utf8');
+const simplify = fs.readFileSync('./adaptable/simplify.js', 'utf8');
 
 const ENGINE = String.raw`
 (function () {
@@ -59,7 +59,7 @@ const ENGINE = String.raw`
 
 const html = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Comis — Browser Playground</title>
+<title>AdaptAble — Browser Playground</title>
 <style>
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,'Segoe UI',Roboto,Arial,sans-serif;background:#e3e6e6}
@@ -99,7 +99,7 @@ ${STYLES}
 <div id="vv-content" class="az-page">${CONTENT}</div>
 
 <div id="vv-panel">
-  <div class="pg-head"><span class="mark">✳</span><h2>Comis</h2></div>
+  <div class="pg-head"><span class="mark">✳</span><h2>AdaptAble</h2></div>
   <p class="sub">Browser playground — the real parser &amp; Simplify engine from the extension.</p>
   <div class="pg-bar">
     <input id="pg-input" type="text" placeholder="Say what's hard… e.g. this is too small"/>
@@ -131,10 +131,10 @@ ${STYLES}
   <p class="pg-foot">Works offline · No account · Page content never sent</p>
 </div>
 
-<script>/* --- real comis/parser.js --- */
+<script>/* --- real adaptable/parser.js --- */
 ${parser}
 </script>
-<script>/* --- real comis/simplify.js --- */
+<script>/* --- real adaptable/simplify.js --- */
 ${simplify}
 </script>
 <script>/* --- compact preview engine (mirrors content.js, scoped to #vv-content) --- */

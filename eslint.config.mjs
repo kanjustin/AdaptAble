@@ -1,4 +1,4 @@
-// ESLint configuration for the Comis web app (Next.js + TypeScript).
+// ESLint configuration for the AdaptAble web app (Next.js + TypeScript).
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
